@@ -3,20 +3,16 @@ using ThonInventory.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Register EF Core so the seeded sheet data can be stored in SQL Server.
+var supabaseConnectionString = builder.Configuration.GetConnectionString("SupabaseConnection")
+    ?? throw new InvalidOperationException("Connection string 'ConnectionStrings:SupabaseConnection' is not configured.");
+
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseNpgsql(supabaseConnectionString));
 
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 
 var app = builder.Build();
-
-using (var scope = app.Services.CreateScope())
-{
-    var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    dbContext.Database.EnsureCreated();
-}
 
 if (app.Environment.IsDevelopment())
 {
