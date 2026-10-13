@@ -4,3 +4,8 @@ obj/
 *.user
 *.suo
 .vscode/
+node_modules/
+frontend/node_modules/
+frontend/.next/
+frontend/.env.local
+ThonInventory/appsettings.Local.json

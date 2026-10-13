@@ -25,6 +25,8 @@ public class InventoryController(ApplicationDbContext dbContext) : ControllerBas
                         item.Price,
                         item.IsOrdered,
                         item.IsMissing,
+                        item.MissingSinceDate,
+                        item.OrderedAtDate,
                         item.Notes))
                     .ToList()))
             .ToListAsync(cancellationToken);
@@ -46,4 +48,6 @@ public record ItemResponse(
     double Price,
     bool IsOrdered,
     bool IsMissing,
+    DateTime? MissingSinceDate,
+    DateTime? OrderedAtDate,
     string? Notes);

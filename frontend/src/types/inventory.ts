@@ -4,6 +4,8 @@ export type InventoryItem = {
   price: number;
   isOrdered: boolean;
   isMissing: boolean;
+  missingSinceDate: string | null;
+  orderedAtDate: string | null;
   notes: string | null;
 };
 
