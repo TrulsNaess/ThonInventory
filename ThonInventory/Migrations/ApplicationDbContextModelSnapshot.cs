@@ -210,11 +210,9 @@ namespace ThonInventory.Migrations
                             Id = 8,
                             CategoryId = 1,
                             DisplayOrder = 8,
-                            IsMissing = true,
+                            IsMissing = false,
                             IsOrdered = false,
-                            MissingSinceDate = new DateTime(2026, 10, 26, 8, 0, 0, 0, DateTimeKind.Utc),
                             Name = "Red Bull",
-                            Notes = "Hylle tom i minibarrom",
                             Price = 39m,
                             Quantity = 12
                         },
@@ -223,9 +221,8 @@ namespace ThonInventory.Migrations
                             Id = 9,
                             CategoryId = 1,
                             DisplayOrder = 9,
-                            IsMissing = true,
+                            IsMissing = false,
                             IsOrdered = false,
-                            MissingSinceDate = new DateTime(2026, 10, 26, 8, 10, 0, 0, DateTimeKind.Utc),
                             Name = "Monster",
                             Price = 68m,
                             Quantity = 10
@@ -609,23 +606,30 @@ namespace ThonInventory.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<int>("ItemId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("QuantitySold")
+                    b.Property<string>("Note")
+                        .HasMaxLength(250)
+                        .HasColumnType("character varying(250)");
+
+                    b.Property<int>("Quantity")
                         .HasColumnType("integer");
 
-                    b.Property<DateTime>("SoldAt")
-                        .HasColumnType("timestamp with time zone");
+                    b.Property<int>("TransactionType")
+                        .HasColumnType("integer");
 
                     b.Property<decimal>("UnitPrice")
                         .HasColumnType("numeric(10,2)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ItemId");
+                    b.HasIndex("CreatedAt");
 
-                    b.HasIndex("SoldAt");
+                    b.HasIndex("ItemId");
 
                     b.ToTable("SalesLogEntries");
 
@@ -633,65 +637,73 @@ namespace ThonInventory.Migrations
                         new
                         {
                             Id = 1,
+                            CreatedAt = new DateTime(2026, 10, 28, 8, 15, 0, 0, DateTimeKind.Utc),
                             ItemId = 1,
-                            QuantitySold = 3,
-                            SoldAt = new DateTime(2026, 10, 28, 8, 15, 0, 0, DateTimeKind.Utc),
+                            Quantity = 3,
+                            TransactionType = 0,
                             UnitPrice = 58m
                         },
                         new
                         {
                             Id = 2,
+                            CreatedAt = new DateTime(2026, 10, 28, 10, 45, 0, 0, DateTimeKind.Utc),
                             ItemId = 10,
-                            QuantitySold = 2,
-                            SoldAt = new DateTime(2026, 10, 28, 10, 45, 0, 0, DateTimeKind.Utc),
+                            Quantity = 2,
+                            TransactionType = 0,
                             UnitPrice = 59m
                         },
                         new
                         {
                             Id = 3,
+                            CreatedAt = new DateTime(2026, 10, 27, 20, 30, 0, 0, DateTimeKind.Utc),
                             ItemId = 20,
-                            QuantitySold = 4,
-                            SoldAt = new DateTime(2026, 10, 27, 20, 30, 0, 0, DateTimeKind.Utc),
+                            Quantity = 4,
+                            TransactionType = 0,
                             UnitPrice = 115m
                         },
                         new
                         {
                             Id = 4,
+                            CreatedAt = new DateTime(2026, 10, 27, 19, 20, 0, 0, DateTimeKind.Utc),
                             ItemId = 24,
-                            QuantitySold = 1,
-                            SoldAt = new DateTime(2026, 10, 27, 19, 20, 0, 0, DateTimeKind.Utc),
+                            Quantity = 1,
+                            TransactionType = 0,
                             UnitPrice = 297m
                         },
                         new
                         {
                             Id = 5,
+                            CreatedAt = new DateTime(2026, 10, 26, 22, 11, 0, 0, DateTimeKind.Utc),
                             ItemId = 36,
-                            QuantitySold = 1,
-                            SoldAt = new DateTime(2026, 10, 26, 22, 11, 0, 0, DateTimeKind.Utc),
+                            Quantity = 1,
+                            TransactionType = 0,
                             UnitPrice = 47m
                         },
                         new
                         {
                             Id = 6,
+                            CreatedAt = new DateTime(2026, 10, 21, 21, 5, 0, 0, DateTimeKind.Utc),
                             ItemId = 27,
-                            QuantitySold = 2,
-                            SoldAt = new DateTime(2026, 10, 21, 21, 5, 0, 0, DateTimeKind.Utc),
+                            Quantity = 2,
+                            TransactionType = 0,
                             UnitPrice = 572m
                         },
                         new
                         {
                             Id = 7,
+                            CreatedAt = new DateTime(2026, 10, 19, 15, 40, 0, 0, DateTimeKind.Utc),
                             ItemId = 3,
-                            QuantitySold = 5,
-                            SoldAt = new DateTime(2026, 10, 19, 15, 40, 0, 0, DateTimeKind.Utc),
+                            Quantity = 5,
+                            TransactionType = 0,
                             UnitPrice = 58m
                         },
                         new
                         {
                             Id = 8,
+                            CreatedAt = new DateTime(2026, 10, 13, 17, 32, 0, 0, DateTimeKind.Utc),
                             ItemId = 41,
-                            QuantitySold = 1,
-                            SoldAt = new DateTime(2026, 10, 13, 17, 32, 0, 0, DateTimeKind.Utc),
+                            Quantity = 1,
+                            TransactionType = 0,
                             UnitPrice = 49m
                         });
                 });

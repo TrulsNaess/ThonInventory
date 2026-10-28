@@ -18,6 +18,16 @@ if (string.IsNullOrWhiteSpace(supabaseConnectionString) || supabaseConnectionStr
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(supabaseConnectionString));
 
+builder.Services.AddCors(options =>
+    options.AddPolicy("Frontend", policy =>
+        policy.WithOrigins(
+                "http://localhost:3000",
+                "http://127.0.0.1:3000",
+                "http://localhost:3001",
+                "http://127.0.0.1:3001")
+            .AllowAnyHeader()
+            .AllowAnyMethod()));
+
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 
@@ -34,6 +44,7 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
+app.UseCors("Frontend");
 app.UseAuthorization();
 app.MapControllers();
 

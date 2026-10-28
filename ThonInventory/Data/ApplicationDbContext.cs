@@ -42,7 +42,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             .HasColumnType("numeric(10,2)");
 
         modelBuilder.Entity<SalesLogEntry>()
-            .HasIndex(entry => entry.SoldAt);
+            .HasIndex(entry => entry.CreatedAt);
 
         SeedSheetData(modelBuilder);
     }
@@ -68,8 +68,8 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
         new() { Id = 5, CategoryId = 1, Name = "Eplemost", DisplayOrder = 5, Quantity = 14, Price = 89m, IsOrdered = true, OrderedAtDate = new DateTime(2026, 10, 27, 9, 5, 0, DateTimeKind.Utc), ExpectedDeliveryDate = new DateTime(2026, 10, 31, 12, 0, 0, DateTimeKind.Utc) },
         new() { Id = 6, CategoryId = 1, Name = "Mineralvann", DisplayOrder = 6, Quantity = 23, Price = 58m },
         new() { Id = 7, CategoryId = 1, Name = "Mineralvann med kullsyre", DisplayOrder = 7, Quantity = 19, Price = 58m },
-        new() { Id = 8, CategoryId = 1, Name = "Red Bull", DisplayOrder = 8, Quantity = 12, Price = 39m, IsMissing = true, MissingSinceDate = new DateTime(2026, 10, 26, 8, 0, 0, DateTimeKind.Utc), Notes = "Hylle tom i minibarrom" },
-        new() { Id = 9, CategoryId = 1, Name = "Monster", DisplayOrder = 9, Quantity = 10, Price = 68m, IsMissing = true, MissingSinceDate = new DateTime(2026, 10, 26, 8, 10, 0, DateTimeKind.Utc) },
+        new() { Id = 8, CategoryId = 1, Name = "Red Bull", DisplayOrder = 8, Quantity = 12, Price = 39m },
+        new() { Id = 9, CategoryId = 1, Name = "Monster", DisplayOrder = 9, Quantity = 10, Price = 68m },
         new() { Id = 10, CategoryId = 2, Name = "Stratos", DisplayOrder = 1, Quantity = 51, Price = 59m },
         new() { Id = 11, CategoryId = 2, Name = "Melkesjokolade", DisplayOrder = 2, Quantity = 39, Price = 59m },
         new() { Id = 12, CategoryId = 2, Name = "Sørlandschips", DisplayOrder = 3, Quantity = 22, Price = 59m, IsOrdered = true, OrderedAtDate = new DateTime(2026, 10, 25, 13, 0, 0, DateTimeKind.Utc), ExpectedDeliveryDate = new DateTime(2026, 10, 29, 10, 0, 0, DateTimeKind.Utc) },
@@ -107,13 +107,13 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
 
     private static SalesLogEntry[] CreateSeedSalesEntries() =>
     [
-        new() { Id = 1, ItemId = 1, QuantitySold = 3, UnitPrice = 58m, SoldAt = new DateTime(2026, 10, 28, 8, 15, 0, DateTimeKind.Utc) },
-        new() { Id = 2, ItemId = 10, QuantitySold = 2, UnitPrice = 59m, SoldAt = new DateTime(2026, 10, 28, 10, 45, 0, DateTimeKind.Utc) },
-        new() { Id = 3, ItemId = 20, QuantitySold = 4, UnitPrice = 115m, SoldAt = new DateTime(2026, 10, 27, 20, 30, 0, DateTimeKind.Utc) },
-        new() { Id = 4, ItemId = 24, QuantitySold = 1, UnitPrice = 297m, SoldAt = new DateTime(2026, 10, 27, 19, 20, 0, DateTimeKind.Utc) },
-        new() { Id = 5, ItemId = 36, QuantitySold = 1, UnitPrice = 47m, SoldAt = new DateTime(2026, 10, 26, 22, 11, 0, DateTimeKind.Utc) },
-        new() { Id = 6, ItemId = 27, QuantitySold = 2, UnitPrice = 572m, SoldAt = new DateTime(2026, 10, 21, 21, 5, 0, DateTimeKind.Utc) },
-        new() { Id = 7, ItemId = 3, QuantitySold = 5, UnitPrice = 58m, SoldAt = new DateTime(2026, 10, 19, 15, 40, 0, DateTimeKind.Utc) },
-        new() { Id = 8, ItemId = 41, QuantitySold = 1, UnitPrice = 49m, SoldAt = new DateTime(2026, 10, 13, 17, 32, 0, DateTimeKind.Utc) }
+        new() { Id = 1, ItemId = 1, Quantity = 3, UnitPrice = 58m, TransactionType = InventoryTransactionType.Sale, CreatedAt = new DateTime(2026, 10, 28, 8, 15, 0, DateTimeKind.Utc) },
+        new() { Id = 2, ItemId = 10, Quantity = 2, UnitPrice = 59m, TransactionType = InventoryTransactionType.Sale, CreatedAt = new DateTime(2026, 10, 28, 10, 45, 0, DateTimeKind.Utc) },
+        new() { Id = 3, ItemId = 20, Quantity = 4, UnitPrice = 115m, TransactionType = InventoryTransactionType.Sale, CreatedAt = new DateTime(2026, 10, 27, 20, 30, 0, DateTimeKind.Utc) },
+        new() { Id = 4, ItemId = 24, Quantity = 1, UnitPrice = 297m, TransactionType = InventoryTransactionType.Sale, CreatedAt = new DateTime(2026, 10, 27, 19, 20, 0, DateTimeKind.Utc) },
+        new() { Id = 5, ItemId = 36, Quantity = 1, UnitPrice = 47m, TransactionType = InventoryTransactionType.Sale, CreatedAt = new DateTime(2026, 10, 26, 22, 11, 0, DateTimeKind.Utc) },
+        new() { Id = 6, ItemId = 27, Quantity = 2, UnitPrice = 572m, TransactionType = InventoryTransactionType.Sale, CreatedAt = new DateTime(2026, 10, 21, 21, 5, 0, DateTimeKind.Utc) },
+        new() { Id = 7, ItemId = 3, Quantity = 5, UnitPrice = 58m, TransactionType = InventoryTransactionType.Sale, CreatedAt = new DateTime(2026, 10, 19, 15, 40, 0, DateTimeKind.Utc) },
+        new() { Id = 8, ItemId = 41, Quantity = 1, UnitPrice = 49m, TransactionType = InventoryTransactionType.Sale, CreatedAt = new DateTime(2026, 10, 13, 17, 32, 0, DateTimeKind.Utc) }
     ];
 }

@@ -13,6 +13,16 @@ export async function apiFetch<T>(path: string, options?: RequestInit): Promise<
   return response.json() as Promise<T>;
 }
 
-export function buildSalesLogPath(period: "today" | "week" | "month") {
-  return `/api/sales?period=${period}`;
+export async function apiPost<TResponse, TRequest>(path: string, body: TRequest): Promise<TResponse> {
+  return apiFetch<TResponse>(path, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(body),
+  });
+}
+
+export function buildSalesLogPath(period: "today" | "week" | "month", type: "all" | "sale" | "restock" | "shrinkage" = "all") {
+  return `/api/sales?period=${period}&type=${type}`;
 }

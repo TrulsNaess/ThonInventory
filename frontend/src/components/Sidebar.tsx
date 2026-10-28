@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 const links = [
   { href: "/", label: "Lager" },
   { href: "/sales-log", label: "Salgslogg" },
+  { href: "/demo-kasse", label: "Demo-Kasse" },
 ];
 
 export default function Sidebar() {
@@ -27,7 +28,7 @@ export default function Sidebar() {
             <Link
               key={link.href}
               href={link.href}
-              className={isActive ? "rounded-lg bg-white px-4 py-3 font-medium text-[#00142b]" : "rounded-lg px-4 py-3 text-slate-300 hover:bg-white/10"}
+              className={isActive ? "block w-full whitespace-nowrap rounded-lg bg-white px-4 py-3 font-medium text-[#00142b]" : "block w-full whitespace-nowrap rounded-lg px-4 py-3 text-slate-300 hover:bg-white/10"}
             >
               {link.label}
             </Link>

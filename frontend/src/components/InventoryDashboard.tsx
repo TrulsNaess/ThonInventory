@@ -1,17 +1,19 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import Link from "next/link";
 import CategoryCard from "@/components/CategoryCard";
 import InventoryList from "@/components/InventoryList";
 import Sidebar from "@/components/Sidebar";
 import SummaryCards from "@/components/SummaryCards";
-import type { InventoryResponse } from "@/types/inventory";
+import { apiPost } from "@/lib/api";
+import type { InventoryResponse, RegisterInventoryChangeRequest, InventoryItem } from "@/types/inventory";
 
 type Props = {
   data: InventoryResponse | null;
 };
 
-type StatusFilter = "all" | "missing" | "ordered";
+type StatusFilter = "all" | "outofstock" | "discrepancy" | "ordered";
 
 export default function InventoryDashboard({ data }: Props) {
   const [query, setQuery] = useState("");
@@ -19,8 +21,19 @@ export default function InventoryDashboard({ data }: Props) {
   const [status, setStatus] = useState<StatusFilter>("all");
   const [isAlertsOpen, setIsAlertsOpen] = useState(false);
 
+  const [restockItemId, setRestockItemId] = useState<number>(0);
+  const [restockQty, setRestockQty] = useState<number>(1);
+  const [shrinkItemId, setShrinkItemId] = useState<number>(0);
+  const [shrinkQty, setShrinkQty] = useState<number>(1);
+
   const categories = data?.categories ?? [];
   const alerts = data?.alerts ?? [];
+  const allItems = categories.flatMap((category) => category.items);
+
+  async function submitInventoryChange(path: "/api/sales/restock" | "/api/sales/shrinkage", payload: RegisterInventoryChangeRequest) {
+    await apiPost(path, payload);
+    window.location.reload();
+  }
 
   const filteredCategories = useMemo(() => {
     const normalizedQuery = query.trim().toLocaleLowerCase("nb-NO");
@@ -37,7 +50,8 @@ export default function InventoryDashboard({ data }: Props) {
 
           const matchesStatus =
             status === "all" ||
-            (status === "missing" && item.isMissing) ||
+            (status === "outofstock" && item.isOutOfStock) ||
+            (status === "discrepancy" && item.isDiscrepancy) ||
             (status === "ordered" && item.isOrdered);
 
           return Boolean(matchesQuery && matchesStatus);
@@ -58,6 +72,9 @@ export default function InventoryDashboard({ data }: Props) {
             </div>
 
             <div className="flex items-center gap-3">
+              <Link href="/demo-kasse" className="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50">
+                Demo-Kasse
+              </Link>
               <button
                 type="button"
                 onClick={() => setIsAlertsOpen((current) => !current)}
@@ -103,7 +120,8 @@ export default function InventoryDashboard({ data }: Props) {
               <SummaryCards
                 total={data.summary.totalItems}
                 totalQuantity={data.summary.totalQuantity}
-                missing={data.summary.missingCount}
+                outOfStock={data.summary.outOfStockCount}
+                discrepancy={data.summary.discrepancyCount}
                 ordered={data.summary.orderedCount}
                 totalValue={data.summary.totalStockValue}
               />
@@ -114,11 +132,63 @@ export default function InventoryDashboard({ data }: Props) {
                     key={category.id}
                     name={category.name}
                     count={category.items.length}
-                    missing={category.items.filter((item) => item.isMissing).length}
+                    missing={category.items.filter((item) => item.isOutOfStock).length}
                     active={categoryId === category.id}
                     onClick={() => setCategoryId((current) => (current === category.id ? null : category.id))}
                   />
                 ))}
+              </section>
+
+              <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
+                <div className="grid gap-4 lg:grid-cols-2">
+                  <form
+                    className="space-y-2"
+                    onSubmit={(event) => {
+                      event.preventDefault();
+                      if (restockItemId > 0) {
+                        void submitInventoryChange("/api/sales/restock", { itemId: restockItemId, quantity: restockQty });
+                      }
+                    }}
+                  >
+                    <h3 className="text-sm font-semibold text-slate-900">Registrer påfyll</h3>
+                    <div className="flex gap-2">
+                      <select className="flex-1 rounded-lg border border-slate-300 px-3 py-2 text-sm" value={restockItemId} onChange={(event) => setRestockItemId(Number(event.target.value))}>
+                        <option value={0}>Velg vare</option>
+                        {allItems.map((item: InventoryItem) => (
+                          <option key={item.id} value={item.id}>
+                            {item.name}
+                          </option>
+                        ))}
+                      </select>
+                      <input className="w-24 rounded-lg border border-slate-300 px-3 py-2 text-sm" min={1} type="number" value={restockQty} onChange={(event) => setRestockQty(Number(event.target.value))} />
+                      <button type="submit" className="rounded-lg bg-slate-900 px-3 py-2 text-sm font-medium text-white">Påfyll</button>
+                    </div>
+                  </form>
+
+                  <form
+                    className="space-y-2"
+                    onSubmit={(event) => {
+                      event.preventDefault();
+                      if (shrinkItemId > 0) {
+                        void submitInventoryChange("/api/sales/shrinkage", { itemId: shrinkItemId, quantity: shrinkQty, note: "Svinn" });
+                      }
+                    }}
+                  >
+                    <h3 className="text-sm font-semibold text-slate-900">Registrer svinn</h3>
+                    <div className="flex gap-2">
+                      <select className="flex-1 rounded-lg border border-slate-300 px-3 py-2 text-sm" value={shrinkItemId} onChange={(event) => setShrinkItemId(Number(event.target.value))}>
+                        <option value={0}>Velg vare</option>
+                        {allItems.map((item: InventoryItem) => (
+                          <option key={item.id} value={item.id}>
+                            {item.name}
+                          </option>
+                        ))}
+                      </select>
+                      <input className="w-24 rounded-lg border border-slate-300 px-3 py-2 text-sm" min={1} type="number" value={shrinkQty} onChange={(event) => setShrinkQty(Number(event.target.value))} />
+                      <button type="submit" className="rounded-lg bg-rose-600 px-3 py-2 text-sm font-medium text-white">Svinn</button>
+                    </div>
+                  </form>
+                </div>
               </section>
 
               <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
@@ -138,7 +208,8 @@ export default function InventoryDashboard({ data }: Props) {
                     <div className="flex rounded-lg bg-slate-100 p-1 text-xs font-medium">
                       {([
                         ["all", "Alle"],
-                        ["missing", "Mangler"],
+                        ["outofstock", "Utsolgt"],
+                        ["discrepancy", "Avvik"],
                         ["ordered", "Bestilt"],
                       ] as const).map(([value, label]) => (
                         <button

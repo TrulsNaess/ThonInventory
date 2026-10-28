@@ -11,10 +11,15 @@ public class SalesLogEntry
     public Item? Item { get; set; }
 
     [Range(1, int.MaxValue)]
-    public int QuantitySold { get; set; }
+    public int Quantity { get; set; }
 
     [Range(0, double.MaxValue)]
     public decimal UnitPrice { get; set; }
 
-    public DateTime SoldAt { get; set; }
+    public InventoryTransactionType TransactionType { get; set; }
+
+    [MaxLength(250)]
+    public string? Note { get; set; }
+
+    public DateTime CreatedAt { get; set; }
 }

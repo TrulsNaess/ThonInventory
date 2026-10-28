@@ -28,7 +28,8 @@ public class InventoryController(ApplicationDbContext dbContext) : ControllerBas
                         item.Quantity,
                         item.Price * item.Quantity,
                         item.IsOrdered,
-                        item.IsMissing,
+                        item.Quantity == 0,
+                        item.IsMissing && item.Quantity > 0,
                         item.MissingSinceDate,
                         item.OrderedAtDate,
                         item.ExpectedDeliveryDate,
@@ -40,7 +41,8 @@ public class InventoryController(ApplicationDbContext dbContext) : ControllerBas
         var summary = new InventorySummaryResponse(
             allItems.Count,
             allItems.Sum(item => item.Quantity),
-            allItems.Count(item => item.IsMissing),
+            allItems.Count(item => item.IsOutOfStock),
+            allItems.Count(item => item.IsDiscrepancy),
             allItems.Count(item => item.IsOrdered),
             allItems.Sum(item => item.StockValue));
 
@@ -67,7 +69,8 @@ public record InventoryResponse(
 public record InventorySummaryResponse(
     int TotalItems,
     int TotalQuantity,
-    int MissingCount,
+    int OutOfStockCount,
+    int DiscrepancyCount,
     int OrderedCount,
     decimal TotalStockValue);
 
@@ -90,7 +93,8 @@ public record ItemResponse(
     int Quantity,
     decimal StockValue,
     bool IsOrdered,
-    bool IsMissing,
+    bool IsOutOfStock,
+    bool IsDiscrepancy,
     DateTime? MissingSinceDate,
     DateTime? OrderedAtDate,
     DateTime? ExpectedDeliveryDate,

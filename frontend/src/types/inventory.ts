@@ -5,7 +5,8 @@ export type InventoryItem = {
   quantity: number;
   stockValue: number;
   isOrdered: boolean;
-  isMissing: boolean;
+  isOutOfStock: boolean;
+  isDiscrepancy: boolean;
   missingSinceDate: string | null;
   orderedAtDate: string | null;
   expectedDeliveryDate: string | null;
@@ -21,7 +22,8 @@ export type InventoryCategory = {
 export type InventorySummary = {
   totalItems: number;
   totalQuantity: number;
-  missingCount: number;
+  outOfStockCount: number;
+  discrepancyCount: number;
   orderedCount: number;
   totalStockValue: number;
 };
@@ -44,17 +46,45 @@ export type SalesLogEntry = {
   id: number;
   itemId: number;
   itemName: string;
-  quantitySold: number;
+  quantity: number;
   unitPrice: number;
   total: number;
-  soldAt: string;
+  type: "sale" | "restock" | "shrinkage";
+  note: string | null;
+  createdAt: string;
 };
 
 export type SalesLogResponse = {
   period: string;
+  type: "all" | "sale" | "restock" | "shrinkage";
   from: string;
   to: string;
   totalUnitsSold: number;
   totalRevenue: number;
+  totalShrinkageLoss: number;
+  totalRestockValue: number;
+  entries: SalesLogEntry[];
+};
+
+export type RegisterInventoryChangeRequest = {
+  itemId: number;
+  quantity: number;
+  unitPrice?: number;
+  note?: string;
+};
+
+export type DemoCheckoutLine = {
+  itemId: number;
+  quantity: number;
+  unitPrice?: number;
+};
+
+export type DemoCheckoutRequest = {
+  lines: DemoCheckoutLine[];
+  note?: string;
+};
+
+export type DemoCheckoutResponse = {
+  total: number;
   entries: SalesLogEntry[];
 };
