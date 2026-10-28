@@ -330,17 +330,6 @@ namespace ThonInventory.Migrations
                         },
                         new
                         {
-                            Id = 19,
-                            CategoryId = 2,
-                            DisplayOrder = 10,
-                            IsMissing = false,
-                            IsOrdered = false,
-                            Name = "Is",
-                            Price = 45m,
-                            Quantity = 40
-                        },
-                        new
-                        {
                             Id = 20,
                             CategoryId = 3,
                             DisplayOrder = 1,
@@ -363,9 +352,20 @@ namespace ThonInventory.Migrations
                         },
                         new
                         {
-                            Id = 22,
+                            Id = 43,
                             CategoryId = 3,
                             DisplayOrder = 3,
+                            IsMissing = false,
+                            IsOrdered = false,
+                            Name = "Somersby Cider",
+                            Price = 124m,
+                            Quantity = 0
+                        },
+                        new
+                        {
+                            Id = 22,
+                            CategoryId = 3,
+                            DisplayOrder = 4,
                             IsMissing = false,
                             IsOrdered = false,
                             Name = "Gin-Tonic i boks",
@@ -376,10 +376,10 @@ namespace ThonInventory.Migrations
                         {
                             Id = 23,
                             CategoryId = 3,
-                            DisplayOrder = 4,
+                            DisplayOrder = 5,
                             IsMissing = false,
                             IsOrdered = false,
-                            Name = "Bulmers Cider",
+                            Name = "Bulmers Cider 0.5l",
                             Price = 159m,
                             Quantity = 17
                         },
@@ -387,10 +387,10 @@ namespace ThonInventory.Migrations
                         {
                             Id = 24,
                             CategoryId = 3,
-                            DisplayOrder = 5,
+                            DisplayOrder = 6,
                             IsMissing = false,
                             IsOrdered = false,
-                            Name = "Prosecco 200ml (små flaske)",
+                            Name = "Prosecco 375ml (små flaske)",
                             Price = 297m,
                             Quantity = 34
                         },
@@ -398,7 +398,7 @@ namespace ThonInventory.Migrations
                         {
                             Id = 25,
                             CategoryId = 3,
-                            DisplayOrder = 6,
+                            DisplayOrder = 7,
                             ExpectedDeliveryDate = new DateTime(2026, 10, 30, 14, 0, 0, 0, DateTimeKind.Utc),
                             IsMissing = false,
                             IsOrdered = true,
@@ -411,7 +411,7 @@ namespace ThonInventory.Migrations
                         {
                             Id = 26,
                             CategoryId = 3,
-                            DisplayOrder = 7,
+                            DisplayOrder = 8,
                             IsMissing = false,
                             IsOrdered = false,
                             Name = "Rødvin 37.5cl (små flaske)",
@@ -422,7 +422,7 @@ namespace ThonInventory.Migrations
                         {
                             Id = 27,
                             CategoryId = 3,
-                            DisplayOrder = 8,
+                            DisplayOrder = 9,
                             IsMissing = false,
                             IsOrdered = false,
                             Name = "Rødvin 750ml",
@@ -433,7 +433,7 @@ namespace ThonInventory.Migrations
                         {
                             Id = 28,
                             CategoryId = 3,
-                            DisplayOrder = 9,
+                            DisplayOrder = 10,
                             IsMissing = false,
                             IsOrdered = false,
                             Name = "Hvitvin 375ml (små flaske)",
@@ -444,7 +444,7 @@ namespace ThonInventory.Migrations
                         {
                             Id = 29,
                             CategoryId = 3,
-                            DisplayOrder = 10,
+                            DisplayOrder = 11,
                             IsMissing = false,
                             IsOrdered = false,
                             Name = "Hvitvin 750ml",
@@ -455,7 +455,7 @@ namespace ThonInventory.Migrations
                         {
                             Id = 30,
                             CategoryId = 3,
-                            DisplayOrder = 11,
+                            DisplayOrder = 12,
                             ExpectedDeliveryDate = new DateTime(2026, 10, 31, 12, 0, 0, 0, DateTimeKind.Utc),
                             IsMissing = false,
                             IsOrdered = true,
@@ -468,18 +468,18 @@ namespace ThonInventory.Migrations
                         {
                             Id = 31,
                             CategoryId = 3,
-                            DisplayOrder = 12,
+                            DisplayOrder = 13,
                             IsMissing = false,
                             IsOrdered = false,
-                            Name = "Rum (Captain Morgan)",
-                            Price = 126m,
+                            Name = "Rom&Cola",
+                            Price = 167m,
                             Quantity = 9
                         },
                         new
                         {
                             Id = 32,
                             CategoryId = 3,
-                            DisplayOrder = 13,
+                            DisplayOrder = 14,
                             IsMissing = false,
                             IsOrdered = false,
                             Name = "Cognac",
@@ -490,7 +490,7 @@ namespace ThonInventory.Migrations
                         {
                             Id = 33,
                             CategoryId = 3,
-                            DisplayOrder = 14,
+                            DisplayOrder = 15,
                             IsMissing = false,
                             IsOrdered = false,
                             Name = "Gin",
@@ -501,7 +501,7 @@ namespace ThonInventory.Migrations
                         {
                             Id = 34,
                             CategoryId = 3,
-                            DisplayOrder = 15,
+                            DisplayOrder = 16,
                             IsMissing = false,
                             IsOrdered = false,
                             Name = "Pink Gin",
@@ -512,11 +512,11 @@ namespace ThonInventory.Migrations
                         {
                             Id = 35,
                             CategoryId = 3,
-                            DisplayOrder = 16,
+                            DisplayOrder = 17,
                             IsMissing = false,
                             IsOrdered = false,
-                            Name = "Tonic Water",
-                            Price = 39m,
+                            Name = "Gin&Tonic",
+                            Price = 167m,
                             Quantity = 33
                         },
                         new
@@ -543,9 +543,31 @@ namespace ThonInventory.Migrations
                         },
                         new
                         {
-                            Id = 38,
+                            Id = 44,
                             CategoryId = 4,
                             DisplayOrder = 3,
+                            IsMissing = false,
+                            IsOrdered = false,
+                            Name = "Barbersett",
+                            Price = 58m,
+                            Quantity = 0
+                        },
+                        new
+                        {
+                            Id = 45,
+                            CategoryId = 4,
+                            DisplayOrder = 4,
+                            IsMissing = false,
+                            IsOrdered = false,
+                            Name = "Paraply",
+                            Price = 74m,
+                            Quantity = 0
+                        },
+                        new
+                        {
+                            Id = 38,
+                            CategoryId = 4,
+                            DisplayOrder = 5,
                             IsMissing = false,
                             IsOrdered = false,
                             Name = "OB rosa",
@@ -556,7 +578,7 @@ namespace ThonInventory.Migrations
                         {
                             Id = 39,
                             CategoryId = 4,
-                            DisplayOrder = 4,
+                            DisplayOrder = 6,
                             IsMissing = false,
                             IsOrdered = false,
                             Name = "OB blå",
@@ -567,7 +589,7 @@ namespace ThonInventory.Migrations
                         {
                             Id = 40,
                             CategoryId = 4,
-                            DisplayOrder = 5,
+                            DisplayOrder = 7,
                             IsMissing = false,
                             IsOrdered = false,
                             Name = "Bind",
@@ -578,7 +600,7 @@ namespace ThonInventory.Migrations
                         {
                             Id = 41,
                             CategoryId = 4,
-                            DisplayOrder = 6,
+                            DisplayOrder = 8,
                             IsMissing = false,
                             IsOrdered = false,
                             Name = "Kortstokk",
@@ -589,7 +611,7 @@ namespace ThonInventory.Migrations
                         {
                             Id = 42,
                             CategoryId = 4,
-                            DisplayOrder = 7,
+                            DisplayOrder = 9,
                             IsMissing = false,
                             IsOrdered = false,
                             Name = "Yatzy",
