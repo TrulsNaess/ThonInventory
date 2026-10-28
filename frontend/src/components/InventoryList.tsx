@@ -14,6 +14,14 @@ function formatDate(value: string | null) {
   }).format(new Date(value));
 }
 
+function formatNok(value: number) {
+  return new Intl.NumberFormat("nb-NO", {
+    style: "currency",
+    currency: "NOK",
+    maximumFractionDigits: 0,
+  }).format(value);
+}
+
 export default function InventoryList({ categories }: Props) {
   if (categories.length === 0 || categories.every((category) => category.items.length === 0)) {
     return (
@@ -40,16 +48,23 @@ export default function InventoryList({ categories }: Props) {
                 <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
                   <tr>
                     <th className="px-5 py-3 font-medium">Produkt</th>
+                    <th className="px-5 py-3 font-medium">Antall</th>
+                    <th className="px-5 py-3 font-medium">Pris</th>
+                    <th className="px-5 py-3 font-medium">Verdi</th>
                     <th className="px-5 py-3 font-medium">Status</th>
                     <th className="px-5 py-3 font-medium">Mangler siden</th>
-                    <th className="px-5 py-3 font-medium">Notat</th>
                     <th className="px-5 py-3 font-medium">Bestilling</th>
+                    <th className="px-5 py-3 font-medium">Levering</th>
+                    <th className="px-5 py-3 font-medium">Notat</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
                   {category.items.map((item) => (
                     <tr key={item.id} className="hover:bg-slate-50/70">
                       <td className="px-5 py-4 font-medium text-slate-900">{item.name}</td>
+                      <td className="px-5 py-4 text-slate-700">{item.quantity}</td>
+                      <td className="px-5 py-4 text-slate-700">{formatNok(item.price)}</td>
+                      <td className="px-5 py-4 text-slate-700">{formatNok(item.stockValue)}</td>
                       <td className="px-5 py-4">
                         {item.isMissing ? (
                           <span className="rounded-full bg-rose-50 px-2.5 py-1 text-xs font-medium text-rose-700">Mangler</span>
@@ -58,17 +73,9 @@ export default function InventoryList({ categories }: Props) {
                         )}
                       </td>
                       <td className="px-5 py-4 text-slate-600">{formatDate(item.missingSinceDate)}</td>
+                      <td className="px-5 py-4">{item.isOrdered ? <span className="rounded-full bg-amber-50 px-2.5 py-1 text-xs font-medium text-amber-800">Bestilt</span> : <span className="text-slate-400">-</span>}</td>
+                      <td className="px-5 py-4 text-slate-600">{formatDate(item.expectedDeliveryDate)}</td>
                       <td className="max-w-xs px-5 py-4 text-slate-600">{item.notes || "-"}</td>
-                      <td className="px-5 py-4">
-                        {item.isOrdered ? (
-                          <div>
-                            <span className="rounded-full bg-amber-50 px-2.5 py-1 text-xs font-medium text-amber-800">Bestilt</span>
-                            <p className="mt-1.5 text-xs text-slate-400">{formatDate(item.orderedAtDate)}</p>
-                          </div>
-                        ) : (
-                          <span className="text-slate-400">-</span>
-                        )}
-                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -90,6 +97,12 @@ export default function InventoryList({ categories }: Props) {
                         <span className="rounded-full bg-amber-50 px-2 py-1 text-[11px] font-medium text-amber-800">Bestilt</span>
                       ) : null}
                     </div>
+                  </div>
+                  <div className="mt-2 grid grid-cols-2 gap-2 text-sm text-slate-600">
+                    <p>Antall: {item.quantity}</p>
+                    <p>Pris: {formatNok(item.price)}</p>
+                    <p>Verdi: {formatNok(item.stockValue)}</p>
+                    <p>Levering: {formatDate(item.expectedDeliveryDate)}</p>
                   </div>
                   {item.notes ? <p className="mt-2 text-sm text-slate-600">{item.notes}</p> : null}
                   {(item.missingSinceDate || item.orderedAtDate) && (

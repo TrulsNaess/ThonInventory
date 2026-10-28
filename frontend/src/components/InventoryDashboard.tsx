@@ -17,11 +17,10 @@ export default function InventoryDashboard({ data }: Props) {
   const [query, setQuery] = useState("");
   const [categoryId, setCategoryId] = useState<number | null>(null);
   const [status, setStatus] = useState<StatusFilter>("all");
+  const [isAlertsOpen, setIsAlertsOpen] = useState(false);
 
   const categories = data?.categories ?? [];
-  const allItems = categories.flatMap((category) => category.items);
-  const missingCount = allItems.filter((item) => item.isMissing).length;
-  const orderedCount = allItems.filter((item) => item.isOrdered).length;
+  const alerts = data?.alerts ?? [];
 
   const filteredCategories = useMemo(() => {
     const normalizedQuery = query.trim().toLocaleLowerCase("nb-NO");
@@ -57,7 +56,22 @@ export default function InventoryDashboard({ data }: Props) {
               <p className="text-xs font-semibold tracking-[0.2em] text-slate-400 md:hidden">THON HOTEL</p>
               <h1 className="text-xl font-semibold text-slate-950 sm:text-2xl">Lageroversikt</h1>
             </div>
-            <span className="rounded-full bg-slate-100 px-3 py-1.5 text-xs font-medium text-slate-600">Resepsjonslager</span>
+
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={() => setIsAlertsOpen((current) => !current)}
+                className="relative rounded-full border border-slate-200 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-50"
+              >
+                <span aria-hidden>🔔</span>
+                {alerts.length > 0 ? (
+                  <span className="absolute -right-1 -top-1 inline-flex min-h-5 min-w-5 items-center justify-center rounded-full bg-rose-500 px-1 text-[10px] font-semibold text-white">
+                    {alerts.length}
+                  </span>
+                ) : null}
+              </button>
+              <span className="rounded-full bg-slate-100 px-3 py-1.5 text-xs font-medium text-slate-600">Resepsjonslager</span>
+            </div>
           </div>
         </header>
 
@@ -69,7 +83,30 @@ export default function InventoryDashboard({ data }: Props) {
             </section>
           ) : (
             <>
-              <SummaryCards total={allItems.length} missing={missingCount} ordered={orderedCount} />
+              {isAlertsOpen ? (
+                <section className="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
+                  <h2 className="font-semibold">Varsler for lav beholdning</h2>
+                  {alerts.length === 0 ? (
+                    <p className="mt-2">Ingen varsler akkurat nå.</p>
+                  ) : (
+                    <ul className="mt-2 space-y-1">
+                      {alerts.map((alert) => (
+                        <li key={alert.itemId}>
+                          {alert.itemName}: {alert.quantity} på lager (grense {alert.threshold})
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </section>
+              ) : null}
+
+              <SummaryCards
+                total={data.summary.totalItems}
+                totalQuantity={data.summary.totalQuantity}
+                missing={data.summary.missingCount}
+                ordered={data.summary.orderedCount}
+                totalValue={data.summary.totalStockValue}
+              />
 
               <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
                 {categories.map((category) => (

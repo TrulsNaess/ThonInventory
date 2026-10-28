@@ -86,6 +86,9 @@ namespace ThonInventory.Migrations
                     b.Property<int>("DisplayOrder")
                         .HasColumnType("integer");
 
+                    b.Property<DateTime?>("ExpectedDeliveryDate")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<bool>("IsMissing")
                         .HasColumnType("boolean");
 
@@ -107,8 +110,11 @@ namespace ThonInventory.Migrations
                     b.Property<DateTime?>("OrderedAtDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<double>("Price")
-                        .HasColumnType("double precision");
+                    b.Property<decimal>("Price")
+                        .HasColumnType("numeric(10,2)");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -126,7 +132,8 @@ namespace ThonInventory.Migrations
                             IsMissing = false,
                             IsOrdered = false,
                             Name = "Coca-Cola",
-                            Price = 0.0
+                            Price = 58m,
+                            Quantity = 48
                         },
                         new
                         {
@@ -136,17 +143,21 @@ namespace ThonInventory.Migrations
                             IsMissing = false,
                             IsOrdered = false,
                             Name = "Coca-Cola Zero",
-                            Price = 0.0
+                            Price = 58m,
+                            Quantity = 44
                         },
                         new
                         {
                             Id = 3,
                             CategoryId = 1,
                             DisplayOrder = 3,
+                            ExpectedDeliveryDate = new DateTime(2026, 10, 30, 11, 0, 0, 0, DateTimeKind.Utc),
                             IsMissing = false,
-                            IsOrdered = false,
+                            IsOrdered = true,
                             Name = "Fanta",
-                            Price = 0.0
+                            OrderedAtDate = new DateTime(2026, 10, 27, 9, 0, 0, 0, DateTimeKind.Utc),
+                            Price = 58m,
+                            Quantity = 26
                         },
                         new
                         {
@@ -156,17 +167,21 @@ namespace ThonInventory.Migrations
                             IsMissing = false,
                             IsOrdered = false,
                             Name = "Sprite",
-                            Price = 0.0
+                            Price = 58m,
+                            Quantity = 31
                         },
                         new
                         {
                             Id = 5,
                             CategoryId = 1,
                             DisplayOrder = 5,
+                            ExpectedDeliveryDate = new DateTime(2026, 10, 31, 12, 0, 0, 0, DateTimeKind.Utc),
                             IsMissing = false,
-                            IsOrdered = false,
+                            IsOrdered = true,
                             Name = "Eplemost",
-                            Price = 0.0
+                            OrderedAtDate = new DateTime(2026, 10, 27, 9, 5, 0, 0, DateTimeKind.Utc),
+                            Price = 89m,
+                            Quantity = 14
                         },
                         new
                         {
@@ -176,7 +191,8 @@ namespace ThonInventory.Migrations
                             IsMissing = false,
                             IsOrdered = false,
                             Name = "Mineralvann",
-                            Price = 0.0
+                            Price = 58m,
+                            Quantity = 23
                         },
                         new
                         {
@@ -186,27 +202,33 @@ namespace ThonInventory.Migrations
                             IsMissing = false,
                             IsOrdered = false,
                             Name = "Mineralvann med kullsyre",
-                            Price = 0.0
+                            Price = 58m,
+                            Quantity = 19
                         },
                         new
                         {
                             Id = 8,
                             CategoryId = 1,
                             DisplayOrder = 8,
-                            IsMissing = false,
+                            IsMissing = true,
                             IsOrdered = false,
+                            MissingSinceDate = new DateTime(2026, 10, 26, 8, 0, 0, 0, DateTimeKind.Utc),
                             Name = "Red Bull",
-                            Price = 0.0
+                            Notes = "Hylle tom i minibarrom",
+                            Price = 39m,
+                            Quantity = 12
                         },
                         new
                         {
                             Id = 9,
                             CategoryId = 1,
                             DisplayOrder = 9,
-                            IsMissing = false,
+                            IsMissing = true,
                             IsOrdered = false,
+                            MissingSinceDate = new DateTime(2026, 10, 26, 8, 10, 0, 0, DateTimeKind.Utc),
                             Name = "Monster",
-                            Price = 0.0
+                            Price = 68m,
+                            Quantity = 10
                         },
                         new
                         {
@@ -216,7 +238,8 @@ namespace ThonInventory.Migrations
                             IsMissing = false,
                             IsOrdered = false,
                             Name = "Stratos",
-                            Price = 0.0
+                            Price = 59m,
+                            Quantity = 51
                         },
                         new
                         {
@@ -226,17 +249,21 @@ namespace ThonInventory.Migrations
                             IsMissing = false,
                             IsOrdered = false,
                             Name = "Melkesjokolade",
-                            Price = 0.0
+                            Price = 59m,
+                            Quantity = 39
                         },
                         new
                         {
                             Id = 12,
                             CategoryId = 2,
                             DisplayOrder = 3,
+                            ExpectedDeliveryDate = new DateTime(2026, 10, 29, 10, 0, 0, 0, DateTimeKind.Utc),
                             IsMissing = false,
-                            IsOrdered = false,
+                            IsOrdered = true,
                             Name = "Sørlandschips",
-                            Price = 0.0
+                            OrderedAtDate = new DateTime(2026, 10, 25, 13, 0, 0, 0, DateTimeKind.Utc),
+                            Price = 59m,
+                            Quantity = 22
                         },
                         new
                         {
@@ -246,7 +273,8 @@ namespace ThonInventory.Migrations
                             IsMissing = false,
                             IsOrdered = false,
                             Name = "Sørlandschips (små poser)",
-                            Price = 0.0
+                            Price = 59m,
+                            Quantity = 28
                         },
                         new
                         {
@@ -256,7 +284,8 @@ namespace ThonInventory.Migrations
                             IsMissing = false,
                             IsOrdered = false,
                             Name = "Chillinøtter",
-                            Price = 0.0
+                            Price = 42m,
+                            Quantity = 18
                         },
                         new
                         {
@@ -266,7 +295,8 @@ namespace ThonInventory.Migrations
                             IsMissing = false,
                             IsOrdered = false,
                             Name = "Peanøtter",
-                            Price = 0.0
+                            Price = 42m,
+                            Quantity = 16
                         },
                         new
                         {
@@ -276,7 +306,8 @@ namespace ThonInventory.Migrations
                             IsMissing = false,
                             IsOrdered = false,
                             Name = "Polly Nøtter",
-                            Price = 0.0
+                            Price = 42m,
+                            Quantity = 27
                         },
                         new
                         {
@@ -286,7 +317,8 @@ namespace ThonInventory.Migrations
                             IsMissing = false,
                             IsOrdered = false,
                             Name = "Extra tyggis",
-                            Price = 0.0
+                            Price = 32m,
+                            Quantity = 60
                         },
                         new
                         {
@@ -296,7 +328,8 @@ namespace ThonInventory.Migrations
                             IsMissing = false,
                             IsOrdered = false,
                             Name = "Små sulten",
-                            Price = 0.0
+                            Price = 38m,
+                            Quantity = 18
                         },
                         new
                         {
@@ -306,7 +339,8 @@ namespace ThonInventory.Migrations
                             IsMissing = false,
                             IsOrdered = false,
                             Name = "Is",
-                            Price = 0.0
+                            Price = 45m,
+                            Quantity = 40
                         },
                         new
                         {
@@ -316,7 +350,8 @@ namespace ThonInventory.Migrations
                             IsMissing = false,
                             IsOrdered = false,
                             Name = "Carlsberg",
-                            Price = 0.0
+                            Price = 115m,
+                            Quantity = 47
                         },
                         new
                         {
@@ -326,7 +361,8 @@ namespace ThonInventory.Migrations
                             IsMissing = false,
                             IsOrdered = false,
                             Name = "Alkoholfri øl",
-                            Price = 0.0
+                            Price = 79m,
+                            Quantity = 36
                         },
                         new
                         {
@@ -336,7 +372,8 @@ namespace ThonInventory.Migrations
                             IsMissing = false,
                             IsOrdered = false,
                             Name = "Gin-Tonic i boks",
-                            Price = 0.0
+                            Price = 115m,
+                            Quantity = 25
                         },
                         new
                         {
@@ -346,7 +383,8 @@ namespace ThonInventory.Migrations
                             IsMissing = false,
                             IsOrdered = false,
                             Name = "Bulmers Cider",
-                            Price = 0.0
+                            Price = 159m,
+                            Quantity = 17
                         },
                         new
                         {
@@ -356,17 +394,21 @@ namespace ThonInventory.Migrations
                             IsMissing = false,
                             IsOrdered = false,
                             Name = "Prosecco 200ml (små flaske)",
-                            Price = 0.0
+                            Price = 297m,
+                            Quantity = 34
                         },
                         new
                         {
                             Id = 25,
                             CategoryId = 3,
                             DisplayOrder = 6,
+                            ExpectedDeliveryDate = new DateTime(2026, 10, 30, 14, 0, 0, 0, DateTimeKind.Utc),
                             IsMissing = false,
-                            IsOrdered = false,
+                            IsOrdered = true,
                             Name = "Prosecco 750ml",
-                            Price = 0.0
+                            OrderedAtDate = new DateTime(2026, 10, 24, 14, 30, 0, 0, DateTimeKind.Utc),
+                            Price = 624m,
+                            Quantity = 12
                         },
                         new
                         {
@@ -376,7 +418,8 @@ namespace ThonInventory.Migrations
                             IsMissing = false,
                             IsOrdered = false,
                             Name = "Rødvin 37.5cl (små flaske)",
-                            Price = 0.0
+                            Price = 315m,
+                            Quantity = 20
                         },
                         new
                         {
@@ -386,7 +429,8 @@ namespace ThonInventory.Migrations
                             IsMissing = false,
                             IsOrdered = false,
                             Name = "Rødvin 750ml",
-                            Price = 0.0
+                            Price = 572m,
+                            Quantity = 15
                         },
                         new
                         {
@@ -396,7 +440,8 @@ namespace ThonInventory.Migrations
                             IsMissing = false,
                             IsOrdered = false,
                             Name = "Hvitvin 375ml (små flaske)",
-                            Price = 0.0
+                            Price = 315m,
+                            Quantity = 16
                         },
                         new
                         {
@@ -406,17 +451,21 @@ namespace ThonInventory.Migrations
                             IsMissing = false,
                             IsOrdered = false,
                             Name = "Hvitvin 750ml",
-                            Price = 0.0
+                            Price = 572m,
+                            Quantity = 11
                         },
                         new
                         {
                             Id = 30,
                             CategoryId = 3,
                             DisplayOrder = 11,
+                            ExpectedDeliveryDate = new DateTime(2026, 10, 31, 12, 0, 0, 0, DateTimeKind.Utc),
                             IsMissing = false,
-                            IsOrdered = false,
+                            IsOrdered = true,
                             Name = "Jameson",
-                            Price = 0.0
+                            OrderedAtDate = new DateTime(2026, 10, 22, 15, 0, 0, 0, DateTimeKind.Utc),
+                            Price = 126m,
+                            Quantity = 8
                         },
                         new
                         {
@@ -426,7 +475,8 @@ namespace ThonInventory.Migrations
                             IsMissing = false,
                             IsOrdered = false,
                             Name = "Rum (Captain Morgan)",
-                            Price = 0.0
+                            Price = 126m,
+                            Quantity = 9
                         },
                         new
                         {
@@ -436,7 +486,8 @@ namespace ThonInventory.Migrations
                             IsMissing = false,
                             IsOrdered = false,
                             Name = "Cognac",
-                            Price = 0.0
+                            Price = 126m,
+                            Quantity = 4
                         },
                         new
                         {
@@ -446,7 +497,8 @@ namespace ThonInventory.Migrations
                             IsMissing = false,
                             IsOrdered = false,
                             Name = "Gin",
-                            Price = 0.0
+                            Price = 126m,
+                            Quantity = 7
                         },
                         new
                         {
@@ -456,7 +508,8 @@ namespace ThonInventory.Migrations
                             IsMissing = false,
                             IsOrdered = false,
                             Name = "Pink Gin",
-                            Price = 0.0
+                            Price = 126m,
+                            Quantity = 6
                         },
                         new
                         {
@@ -466,7 +519,8 @@ namespace ThonInventory.Migrations
                             IsMissing = false,
                             IsOrdered = false,
                             Name = "Tonic Water",
-                            Price = 0.0
+                            Price = 39m,
+                            Quantity = 33
                         },
                         new
                         {
@@ -476,7 +530,8 @@ namespace ThonInventory.Migrations
                             IsMissing = false,
                             IsOrdered = false,
                             Name = "Tannbørste",
-                            Price = 0.0
+                            Price = 47m,
+                            Quantity = 14
                         },
                         new
                         {
@@ -486,7 +541,8 @@ namespace ThonInventory.Migrations
                             IsMissing = false,
                             IsOrdered = false,
                             Name = "Tannkrem",
-                            Price = 0.0
+                            Price = 42m,
+                            Quantity = 18
                         },
                         new
                         {
@@ -496,7 +552,8 @@ namespace ThonInventory.Migrations
                             IsMissing = false,
                             IsOrdered = false,
                             Name = "OB rosa",
-                            Price = 0.0
+                            Price = 37m,
+                            Quantity = 22
                         },
                         new
                         {
@@ -506,7 +563,8 @@ namespace ThonInventory.Migrations
                             IsMissing = false,
                             IsOrdered = false,
                             Name = "OB blå",
-                            Price = 0.0
+                            Price = 37m,
+                            Quantity = 20
                         },
                         new
                         {
@@ -516,7 +574,8 @@ namespace ThonInventory.Migrations
                             IsMissing = false,
                             IsOrdered = false,
                             Name = "Bind",
-                            Price = 0.0
+                            Price = 42m,
+                            Quantity = 13
                         },
                         new
                         {
@@ -526,7 +585,8 @@ namespace ThonInventory.Migrations
                             IsMissing = false,
                             IsOrdered = false,
                             Name = "Kortstokk",
-                            Price = 0.0
+                            Price = 49m,
+                            Quantity = 9
                         },
                         new
                         {
@@ -536,7 +596,103 @@ namespace ThonInventory.Migrations
                             IsMissing = false,
                             IsOrdered = false,
                             Name = "Yatzy",
-                            Price = 0.0
+                            Price = 79m,
+                            Quantity = 7
+                        });
+                });
+
+            modelBuilder.Entity("ThonInventory.Models.SalesLogEntry", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ItemId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("QuantitySold")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("SoldAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<decimal>("UnitPrice")
+                        .HasColumnType("numeric(10,2)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ItemId");
+
+                    b.HasIndex("SoldAt");
+
+                    b.ToTable("SalesLogEntries");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            ItemId = 1,
+                            QuantitySold = 3,
+                            SoldAt = new DateTime(2026, 10, 28, 8, 15, 0, 0, DateTimeKind.Utc),
+                            UnitPrice = 58m
+                        },
+                        new
+                        {
+                            Id = 2,
+                            ItemId = 10,
+                            QuantitySold = 2,
+                            SoldAt = new DateTime(2026, 10, 28, 10, 45, 0, 0, DateTimeKind.Utc),
+                            UnitPrice = 59m
+                        },
+                        new
+                        {
+                            Id = 3,
+                            ItemId = 20,
+                            QuantitySold = 4,
+                            SoldAt = new DateTime(2026, 10, 27, 20, 30, 0, 0, DateTimeKind.Utc),
+                            UnitPrice = 115m
+                        },
+                        new
+                        {
+                            Id = 4,
+                            ItemId = 24,
+                            QuantitySold = 1,
+                            SoldAt = new DateTime(2026, 10, 27, 19, 20, 0, 0, DateTimeKind.Utc),
+                            UnitPrice = 297m
+                        },
+                        new
+                        {
+                            Id = 5,
+                            ItemId = 36,
+                            QuantitySold = 1,
+                            SoldAt = new DateTime(2026, 10, 26, 22, 11, 0, 0, DateTimeKind.Utc),
+                            UnitPrice = 47m
+                        },
+                        new
+                        {
+                            Id = 6,
+                            ItemId = 27,
+                            QuantitySold = 2,
+                            SoldAt = new DateTime(2026, 10, 21, 21, 5, 0, 0, DateTimeKind.Utc),
+                            UnitPrice = 572m
+                        },
+                        new
+                        {
+                            Id = 7,
+                            ItemId = 3,
+                            QuantitySold = 5,
+                            SoldAt = new DateTime(2026, 10, 19, 15, 40, 0, 0, DateTimeKind.Utc),
+                            UnitPrice = 58m
+                        },
+                        new
+                        {
+                            Id = 8,
+                            ItemId = 41,
+                            QuantitySold = 1,
+                            SoldAt = new DateTime(2026, 10, 13, 17, 32, 0, 0, DateTimeKind.Utc),
+                            UnitPrice = 49m
                         });
                 });
 
@@ -549,6 +705,17 @@ namespace ThonInventory.Migrations
                         .IsRequired();
 
                     b.Navigation("Category");
+                });
+
+            modelBuilder.Entity("ThonInventory.Models.SalesLogEntry", b =>
+                {
+                    b.HasOne("ThonInventory.Models.Item", "Item")
+                        .WithMany()
+                        .HasForeignKey("ItemId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Item");
                 });
 
             modelBuilder.Entity("ThonInventory.Models.Category", b =>

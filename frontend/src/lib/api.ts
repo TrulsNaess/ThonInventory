@@ -12,3 +12,7 @@ export async function apiFetch<T>(path: string, options?: RequestInit): Promise<
 
   return response.json() as Promise<T>;
 }
+
+export function buildSalesLogPath(period: "today" | "week" | "month") {
+  return `/api/sales?period=${period}`;
+}

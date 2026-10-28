@@ -17,6 +17,9 @@ public class Item
     // Keeps the same ordering as the current hotel sheet inside each category.
     public int DisplayOrder { get; set; }
 
+    [Range(0, int.MaxValue)]
+    public int Quantity { get; set; }
+
     public bool IsMissing { get; set; }
 
     public DateTime? MissingSinceDate { get; set; }
@@ -28,5 +31,8 @@ public class Item
 
     public DateTime? OrderedAtDate { get; set; }
 
-    public double Price { get; set; }
+    public DateTime? ExpectedDeliveryDate { get; set; }
+
+    [Range(0, double.MaxValue)]
+    public decimal Price { get; set; }
 }

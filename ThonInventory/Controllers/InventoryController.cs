@@ -8,6 +8,8 @@ namespace ThonInventory.Controllers;
 [Route("api/[controller]")]
 public class InventoryController(ApplicationDbContext dbContext) : ControllerBase
 {
+    private const int LowStockThreshold = 30;
+
     [HttpGet]
     public async Task<ActionResult<InventoryResponse>> GetInventory(CancellationToken cancellationToken)
     {
@@ -23,19 +25,58 @@ public class InventoryController(ApplicationDbContext dbContext) : ControllerBas
                         item.Id,
                         item.Name,
                         item.Price,
+                        item.Quantity,
+                        item.Price * item.Quantity,
                         item.IsOrdered,
                         item.IsMissing,
                         item.MissingSinceDate,
                         item.OrderedAtDate,
+                        item.ExpectedDeliveryDate,
                         item.Notes))
                     .ToList()))
             .ToListAsync(cancellationToken);
 
-        return Ok(new InventoryResponse(categories));
+        var allItems = categories.SelectMany(category => category.Items).ToList();
+        var summary = new InventorySummaryResponse(
+            allItems.Count,
+            allItems.Sum(item => item.Quantity),
+            allItems.Count(item => item.IsMissing),
+            allItems.Count(item => item.IsOrdered),
+            allItems.Sum(item => item.StockValue));
+
+        var alerts = allItems
+            .Where(item => item.Quantity < LowStockThreshold)
+            .OrderBy(item => item.Quantity)
+            .Select(item => new LowStockAlertResponse(
+                item.Id,
+                item.Name,
+                item.Quantity,
+                LowStockThreshold,
+                $"{item.Name} har lav beholdning ({item.Quantity})."))
+            .ToList();
+
+        return Ok(new InventoryResponse(categories, summary, alerts));
     }
 }
 
-public record InventoryResponse(IReadOnlyList<CategoryResponse> Categories);
+public record InventoryResponse(
+    IReadOnlyList<CategoryResponse> Categories,
+    InventorySummaryResponse Summary,
+    IReadOnlyList<LowStockAlertResponse> Alerts);
+
+public record InventorySummaryResponse(
+    int TotalItems,
+    int TotalQuantity,
+    int MissingCount,
+    int OrderedCount,
+    decimal TotalStockValue);
+
+public record LowStockAlertResponse(
+    int ItemId,
+    string ItemName,
+    int Quantity,
+    int Threshold,
+    string Message);
 
 public record CategoryResponse(
     int Id,
@@ -45,9 +86,12 @@ public record CategoryResponse(
 public record ItemResponse(
     int Id,
     string Name,
-    double Price,
+    decimal Price,
+    int Quantity,
+    decimal StockValue,
     bool IsOrdered,
     bool IsMissing,
     DateTime? MissingSinceDate,
     DateTime? OrderedAtDate,
+    DateTime? ExpectedDeliveryDate,
     string? Notes);
