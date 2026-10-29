@@ -74,7 +74,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
         new() { Id = 10, CategoryId = 2, Name = "Stratos", DisplayOrder = 1, Quantity = 51, Price = 59m },
         new() { Id = 11, CategoryId = 2, Name = "Melkesjokolade", DisplayOrder = 2, Quantity = 39, Price = 59m },
         new() { Id = 12, CategoryId = 2, Name = "Sørlandschips", DisplayOrder = 3, Quantity = 22, Price = 59m, IsOrdered = true, OrderedAtDate = new DateTime(2026, 10, 25, 13, 0, 0, DateTimeKind.Utc), ExpectedDeliveryDate = new DateTime(2026, 10, 29, 10, 0, 0, DateTimeKind.Utc) },
-        new() { Id = 13, CategoryId = 2, Name = "Sørlandschips (små poser)", DisplayOrder = 4, Quantity = 28, Price = 59m },
+        new() { Id = 13, CategoryId = 2, Name = "Sørlandschips (små poser)", DisplayOrder = 4, Quantity = 28, Price = 0m },
         new() { Id = 14, CategoryId = 2, Name = "Chillinøtter", DisplayOrder = 5, Quantity = 18, Price = 42m },
         new() { Id = 15, CategoryId = 2, Name = "Peanøtter", DisplayOrder = 6, Quantity = 16, Price = 42m },
         new() { Id = 16, CategoryId = 2, Name = "Polly Nøtter", DisplayOrder = 7, Quantity = 27, Price = 42m },

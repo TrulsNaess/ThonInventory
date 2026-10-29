@@ -270,7 +270,7 @@ namespace ThonInventory.Migrations
                             IsMissing = false,
                             IsOrdered = false,
                             Name = "Sørlandschips (små poser)",
-                            Price = 59m,
+                            Price = 0m,
                             Quantity = 28
                         },
                         new
