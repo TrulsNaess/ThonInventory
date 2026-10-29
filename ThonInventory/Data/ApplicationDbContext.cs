@@ -103,7 +103,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
 
         new() { Id = 36, CategoryId = 4, Name = "Tannbørste", DisplayOrder = 1, Quantity = 14, Price = 47m },
         new() { Id = 37, CategoryId = 4, Name = "Tannkrem", DisplayOrder = 2, Quantity = 18, Price = 42m },
-        new() { Id = 44, CategoryId = 4, Name = "Barbersett", DisplayOrder = 3, Quantity = 0, Price = 58m },
+        new() { Id = 44, CategoryId = 4, Name = "Shaving kit", DisplayOrder = 3, Quantity = 0, Price = 58m },
         new() { Id = 45, CategoryId = 4, Name = "Paraply", DisplayOrder = 4, Quantity = 0, Price = 74m },
         new() { Id = 38, CategoryId = 4, Name = "OB rosa", DisplayOrder = 5, Quantity = 22, Price = 37m },
         new() { Id = 39, CategoryId = 4, Name = "OB blå", DisplayOrder = 6, Quantity = 20, Price = 37m },

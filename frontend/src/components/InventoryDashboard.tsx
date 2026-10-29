@@ -81,10 +81,10 @@ export default function InventoryDashboard({ data }: Props) {
             <Sidebar />
 
             <main className="min-w-0 flex-1">
-                <header className="sticky top-0 z-30 border-b border-slate-200/80 bg-white/90 px-4 py-4 shadow-sm backdrop-blur-xl sm:px-6 lg:px-8">
+                <header className="sticky top-0 z-30 border-b border-[#E7D6D9] bg-[#FAF3F4] px-4 py-4 shadow-sm backdrop-blur-xl sm:px-6 lg:px-8">
                     <div className="mx-auto flex max-w-7xl items-center justify-between gap-4">
                         <div>
-                            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-blue-500">
+                            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#B8323E]">
                                 Thon Hotel Kristiansand
                             </p>
 

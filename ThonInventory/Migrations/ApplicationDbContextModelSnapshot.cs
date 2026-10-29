@@ -548,7 +548,7 @@ namespace ThonInventory.Migrations
                             DisplayOrder = 3,
                             IsMissing = false,
                             IsOrdered = false,
-                            Name = "Barbersett",
+                            Name = "Shaving kit",
                             Price = 58m,
                             Quantity = 0
                         },
