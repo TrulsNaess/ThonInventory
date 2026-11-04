@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -15,8 +16,8 @@ export default function Sidebar() {
   return (
     <aside className="hidden min-h-screen w-64 shrink-0 flex-col bg-[#00142b] px-5 py-7 text-white md:flex">
       <div className="border-b border-white/10 pb-7">
-        <p className="text-[11px] font-semibold tracking-[0.28em] text-slate-300">THON HOTEL</p>
-        <h1 className="mt-2 text-xl font-semibold">Lagerstyring</h1>
+        <Image src="/thon-logo-ny.png" alt="Thon Hotel" width={140} height={42} className="h-auto w-auto" priority />
+        <h1 className="mt-3 text-xl font-semibold">Lagerstyring</h1>
         <p className="mt-1 text-sm text-slate-400">Kristiansand</p>
       </div>
 

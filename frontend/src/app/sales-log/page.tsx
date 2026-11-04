@@ -72,7 +72,9 @@ export default async function SalesLogPage({
               <Link href="/demo-kasse" className="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50">
                 Demo-Kasse
               </Link>
-              <div className="rounded-full bg-slate-100 px-3 py-1.5 text-xs font-medium text-slate-600">Resepsjonslager</div>
+              <Link href="/" className="rounded-full bg-slate-100 px-3 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-200">
+                Lager
+              </Link>
             </div>
           </div>
         </header>
