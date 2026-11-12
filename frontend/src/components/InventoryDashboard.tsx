@@ -19,6 +19,13 @@ type Props = {
 
 type StatusFilter = "all" | "outofstock" | "discrepancy" | "ordered";
 
+const categoryImages: Record<string, string> = {
+    BRUS: "/products/brus.png",
+    SNACKS: "/products/snacks.png",
+    ALKOHOL: "/products/alkohol.png",
+    KIOSK: "/products/kiosk.png",
+};
+
 export default function InventoryDashboard({ data }: Props) {
     const [query, setQuery] = useState("");
     const [categoryId, setCategoryId] = useState<number | null>(null);
@@ -27,9 +34,13 @@ export default function InventoryDashboard({ data }: Props) {
 
     const [restockItemId, setRestockItemId] = useState<number>(0);
     const [restockQty, setRestockQty] = useState<number>(1);
+
     const [shrinkItemId, setShrinkItemId] = useState<number>(0);
     const [shrinkQty, setShrinkQty] = useState<number>(1);
-    const [shrinkCategory, setShrinkCategory] = useState<"given_away" | "misregistered" | "missing_or_stolen">("misregistered");
+
+    const [shrinkCategory, setShrinkCategory] = useState<
+        "given_away" | "misregistered" | "missing_or_stolen"
+    >("misregistered");
 
     const categories = data?.categories ?? [];
     const alerts = data?.alerts ?? [];
@@ -52,7 +63,8 @@ export default function InventoryDashboard({ data }: Props) {
 
         return categories
             .filter(
-                (category) => categoryId === null || category.id === categoryId,
+                (category) =>
+                    categoryId === null || category.id === categoryId,
             )
             .map((category) => ({
                 ...category,
@@ -97,7 +109,9 @@ export default function InventoryDashboard({ data }: Props) {
                         <div className="flex items-center gap-3">
                             <button
                                 type="button"
-                                onClick={() => setIsAlertsOpen((current) => !current)}
+                                onClick={() =>
+                                    setIsAlertsOpen((current) => !current)
+                                }
                                 className="relative flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white shadow-sm transition hover:scale-105 hover:bg-slate-50"
                             >
                                 <span aria-hidden>🔔</span>
@@ -108,7 +122,6 @@ export default function InventoryDashboard({ data }: Props) {
                                     </span>
                                 ) : null}
                             </button>
-
                         </div>
                     </div>
                 </header>
@@ -119,6 +132,7 @@ export default function InventoryDashboard({ data }: Props) {
                             <p className="font-semibold">
                                 Klarte ikke å hente lagerdata.
                             </p>
+
                             <p className="mt-1 text-rose-700">
                                 Sjekk at serverdelen kjører på port 5003 og at
                                 databasetilkoblingen er riktig.
@@ -146,8 +160,8 @@ export default function InventoryDashboard({ data }: Props) {
                                                     <span className="font-medium">
                                                         {alert.itemName}
                                                     </span>
-                                                    : {alert.quantity} på lager (grense{" "}
-                                                    {alert.threshold})
+                                                    : {alert.quantity} på lager
+                                                    (grense {alert.threshold})
                                                 </li>
                                             ))}
                                         </ul>
@@ -179,7 +193,9 @@ export default function InventoryDashboard({ data }: Props) {
                                     {selectedCategory ? (
                                         <button
                                             type="button"
-                                            onClick={() => setCategoryId(null)}
+                                            onClick={() =>
+                                                setCategoryId(null)
+                                            }
                                             className="rounded-lg bg-white px-3 py-2 text-xs font-semibold text-slate-600 shadow-sm ring-1 ring-slate-200 transition hover:bg-slate-50 hover:text-slate-900"
                                         >
                                             Vis alle varer
@@ -195,10 +211,16 @@ export default function InventoryDashboard({ data }: Props) {
                                             count={category.items.length}
                                             missing={
                                                 category.items.filter(
-                                                    (item) => item.isOutOfStock,
+                                                    (item) =>
+                                                        item.isOutOfStock,
                                                 ).length
                                             }
-                                            active={categoryId === category.id}
+                                            active={
+                                                categoryId === category.id
+                                            }
+                                            imageSrc={
+                                                categoryImages[category.name]
+                                            }
                                             onClick={() =>
                                                 setCategoryId((current) =>
                                                     current === category.id
@@ -232,9 +254,11 @@ export default function InventoryDashboard({ data }: Props) {
                                         <p className="text-xs font-semibold uppercase tracking-wider text-emerald-600">
                                             Lager
                                         </p>
+
                                         <h3 className="mt-1 font-bold text-slate-950">
                                             Registrer påfyll
                                         </h3>
+
                                         <p className="mt-1 text-xs text-slate-500">
                                             Legg til nye varer i beholdningen
                                         </p>
@@ -246,17 +270,26 @@ export default function InventoryDashboard({ data }: Props) {
                                             value={restockItemId}
                                             onChange={(event) =>
                                                 setRestockItemId(
-                                                    Number(event.target.value),
+                                                    Number(
+                                                        event.target.value,
+                                                    ),
                                                 )
                                             }
                                         >
-                                            <option value={0}>Velg vare</option>
+                                            <option value={0}>
+                                                Velg vare
+                                            </option>
 
-                                            {allItems.map((item: InventoryItem) => (
-                                                <option key={item.id} value={item.id}>
-                                                    {item.name}
-                                                </option>
-                                            ))}
+                                            {allItems.map(
+                                                (item: InventoryItem) => (
+                                                    <option
+                                                        key={item.id}
+                                                        value={item.id}
+                                                    >
+                                                        {item.name}
+                                                    </option>
+                                                ),
+                                            )}
                                         </select>
 
                                         <input
@@ -265,7 +298,11 @@ export default function InventoryDashboard({ data }: Props) {
                                             type="number"
                                             value={restockQty}
                                             onChange={(event) =>
-                                                setRestockQty(Number(event.target.value))
+                                                setRestockQty(
+                                                    Number(
+                                                        event.target.value,
+                                                    ),
+                                                )
                                             }
                                         />
 
@@ -289,7 +326,8 @@ export default function InventoryDashboard({ data }: Props) {
                                                 {
                                                     itemId: shrinkItemId,
                                                     quantity: shrinkQty,
-                                                    category: shrinkCategory,
+                                                    category:
+                                                        shrinkCategory,
                                                     note: "Svinn registrert fra dashboard",
                                                 },
                                             );
@@ -300,9 +338,11 @@ export default function InventoryDashboard({ data }: Props) {
                                         <p className="text-xs font-semibold uppercase tracking-wider text-rose-600">
                                             Beholdning
                                         </p>
+
                                         <h3 className="mt-1 font-bold text-slate-950">
                                             Registrer svinn
                                         </h3>
+
                                         <p className="mt-1 text-xs text-slate-500">
                                             Trekk varer fra lagerbeholdningen
                                         </p>
@@ -314,17 +354,26 @@ export default function InventoryDashboard({ data }: Props) {
                                             value={shrinkItemId}
                                             onChange={(event) =>
                                                 setShrinkItemId(
-                                                    Number(event.target.value),
+                                                    Number(
+                                                        event.target.value,
+                                                    ),
                                                 )
                                             }
                                         >
-                                            <option value={0}>Velg vare</option>
+                                            <option value={0}>
+                                                Velg vare
+                                            </option>
 
-                                            {allItems.map((item: InventoryItem) => (
-                                                <option key={item.id} value={item.id}>
-                                                    {item.name}
-                                                </option>
-                                            ))}
+                                            {allItems.map(
+                                                (item: InventoryItem) => (
+                                                    <option
+                                                        key={item.id}
+                                                        value={item.id}
+                                                    >
+                                                        {item.name}
+                                                    </option>
+                                                ),
+                                            )}
                                         </select>
 
                                         <select
@@ -332,13 +381,24 @@ export default function InventoryDashboard({ data }: Props) {
                                             value={shrinkCategory}
                                             onChange={(event) =>
                                                 setShrinkCategory(
-                                                    event.target.value as "given_away" | "misregistered" | "missing_or_stolen",
+                                                    event.target.value as
+                                                    | "given_away"
+                                                    | "misregistered"
+                                                    | "missing_or_stolen",
                                                 )
                                             }
                                         >
-                                            <option value="given_away">Gis bort</option>
-                                            <option value="misregistered">Feilregistrert</option>
-                                            <option value="missing_or_stolen">Borte / stjålet</option>
+                                            <option value="given_away">
+                                                Gis bort
+                                            </option>
+
+                                            <option value="misregistered">
+                                                Feilregistrert
+                                            </option>
+
+                                            <option value="missing_or_stolen">
+                                                Borte / stjålet
+                                            </option>
                                         </select>
 
                                         <input
@@ -347,7 +407,11 @@ export default function InventoryDashboard({ data }: Props) {
                                             type="number"
                                             value={shrinkQty}
                                             onChange={(event) =>
-                                                setShrinkQty(Number(event.target.value))
+                                                setShrinkQty(
+                                                    Number(
+                                                        event.target.value,
+                                                    ),
+                                                )
                                             }
                                         />
 
@@ -367,6 +431,7 @@ export default function InventoryDashboard({ data }: Props) {
                                         <h2 className="font-bold text-slate-950">
                                             Varer
                                         </h2>
+
                                         <p className="mt-0.5 text-xs text-slate-500">
                                             Søk eller filtrer lageroversikten
                                         </p>
@@ -386,15 +451,23 @@ export default function InventoryDashboard({ data }: Props) {
                                             {(
                                                 [
                                                     ["all", "Alle"],
-                                                    ["outofstock", "Utsolgt"],
-                                                    ["discrepancy", "Avvik"],
+                                                    [
+                                                        "outofstock",
+                                                        "Utsolgt",
+                                                    ],
+                                                    [
+                                                        "discrepancy",
+                                                        "Avvik",
+                                                    ],
                                                     ["ordered", "Bestilt"],
                                                 ] as const
                                             ).map(([value, label]) => (
                                                 <button
                                                     key={value}
                                                     type="button"
-                                                    onClick={() => setStatus(value)}
+                                                    onClick={() =>
+                                                        setStatus(value)
+                                                    }
                                                     className={`rounded-lg px-3 py-2 transition-all ${status === value
                                                             ? "bg-white font-semibold text-slate-950 shadow-sm"
                                                             : "text-slate-500 hover:bg-white/70 hover:text-slate-800"
@@ -408,7 +481,9 @@ export default function InventoryDashboard({ data }: Props) {
                                 </div>
                             </section>
 
-                            <InventoryList categories={filteredCategories} />
+                            <InventoryList
+                                categories={filteredCategories}
+                            />
 
                             <div className="fixed bottom-4 left-4 z-20">
                                 <Link
