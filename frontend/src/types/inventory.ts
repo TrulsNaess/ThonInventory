@@ -5,6 +5,8 @@ export type InventoryItem = {
   quantity: number;
   stockValue: number;
   isOrdered: boolean;
+  orderedQuantity: number;
+  isOrderOverdue: boolean;
   isOutOfStock: boolean;
   isDiscrepancy: boolean;
   missingSinceDate: string | null;
@@ -42,6 +44,10 @@ export type InventoryResponse = {
   alerts: LowStockAlert[];
 };
 
+export type SalesLogEntryType = "sale" | "restock" | "shrinkage" | "orderplaced" | "orderconfirmed" | "orderrejected";
+
+export type SalesLogCategory = "all" | "given_away" | "misregistered" | "missing_or_stolen" | "orderplaced" | "orderconfirmed" | "orderrejected";
+
 export type SalesLogEntry = {
   id: number;
   itemId: number;
@@ -49,14 +55,16 @@ export type SalesLogEntry = {
   quantity: number;
   unitPrice: number;
   total: number;
-  type: "sale" | "restock" | "shrinkage";
+  type: SalesLogEntryType;
+  category: string;
   note: string | null;
   createdAt: string;
 };
 
 export type SalesLogResponse = {
   period: string;
-  type: "all" | "sale" | "restock" | "shrinkage";
+  type: "all" | "sale" | "restock" | "shrinkage" | "order" | "orderplaced" | "orderconfirmed" | "orderrejected";
+  category: SalesLogCategory;
   from: string;
   to: string;
   totalUnitsSold: number;
@@ -70,6 +78,26 @@ export type RegisterInventoryChangeRequest = {
   itemId: number;
   quantity: number;
   unitPrice?: number;
+  category?: "given_away" | "misregistered" | "missing_or_stolen";
+  note?: string;
+};
+
+export type RegisterOrderRequest = {
+  itemId: number;
+  quantity: number;
+  expectedDeliveryDate?: string;
+  unitPrice?: number;
+  note?: string;
+};
+
+export type ConfirmOrderRequest = {
+  itemId: number;
+  receivedQuantity: number;
+  note?: string;
+};
+
+export type RejectOrderRequest = {
+  itemId: number;
   note?: string;
 };
 

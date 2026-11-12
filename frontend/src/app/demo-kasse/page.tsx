@@ -28,6 +28,7 @@ export default function DemoKassePage() {
   const [quantity, setQuantity] = useState(1);
   const [cart, setCart] = useState<CartLine[]>([]);
   const [isSelling, setIsSelling] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     void (async () => {
@@ -42,7 +43,17 @@ export default function DemoKassePage() {
 
   const items = useMemo(() => data?.categories.flatMap((category) => category.items) ?? [], [data]);
 
+  const cartQuantityByItem = useMemo(() => {
+    const map = new Map<number, number>();
+    for (const line of cart) {
+      map.set(line.itemId, (map.get(line.itemId) ?? 0) + line.quantity);
+    }
+    return map;
+  }, [cart]);
+
   function addToCart() {
+    setError(null);
+
     if (itemId <= 0 || quantity <= 0) {
       return;
     }
@@ -50,6 +61,19 @@ export default function DemoKassePage() {
     const selected = items.find((item) => item.id === itemId);
 
     if (!selected) {
+      return;
+    }
+
+    const alreadyInCart = cartQuantityByItem.get(itemId) ?? 0;
+    const remaining = selected.quantity - alreadyInCart;
+
+    if (remaining <= 0) {
+      setError(`Det er ikke flere ${selected.name} igjen på lager.`);
+      return;
+    }
+
+    if (quantity > remaining) {
+      setError(`Du kan maks legge til ${remaining} av ${selected.name}.`);
       return;
     }
 
@@ -72,6 +96,15 @@ export default function DemoKassePage() {
       return;
     }
 
+    for (const line of cart) {
+      const item = items.find((entry) => entry.id === line.itemId);
+      if (!item || line.quantity > item.quantity) {
+        setError(`Kan ikke selge mer enn lagerbeholdning for ${line.itemName}.`);
+        return;
+      }
+    }
+
+    setError(null);
     setIsSelling(true);
 
     try {
@@ -85,6 +118,10 @@ export default function DemoKassePage() {
       setIsSelling(false);
     }
   }
+
+  const selectedItem = items.find((item) => item.id === itemId);
+  const selectedReserved = itemId > 0 ? cartQuantityByItem.get(itemId) ?? 0 : 0;
+  const selectedRemaining = selectedItem ? selectedItem.quantity - selectedReserved : 0;
 
   const cartTotal = cart.reduce((sum, line) => sum + line.quantity * line.unitPrice, 0);
 
@@ -116,16 +153,30 @@ export default function DemoKassePage() {
                   <select className="flex-1 rounded-lg border border-slate-300 px-3 py-2 text-sm" value={itemId} onChange={(event) => setItemId(Number(event.target.value))}>
                     <option value={0}>Velg produkt</option>
                     {items.map((item: InventoryItem) => (
-                      <option key={item.id} value={item.id}>
+                      <option key={item.id} value={item.id} disabled={item.quantity <= 0}>
                         {item.name} ({item.quantity} på lager)
                       </option>
                     ))}
                   </select>
-                  <input className="w-24 rounded-lg border border-slate-300 px-3 py-2 text-sm" min={1} type="number" value={quantity} onChange={(event) => setQuantity(Number(event.target.value))} />
-                  <button type="button" onClick={addToCart} className="rounded-lg bg-slate-900 px-3 py-2 text-sm font-medium text-white">
+                  <input
+                    className="w-24 rounded-lg border border-slate-300 px-3 py-2 text-sm"
+                    min={1}
+                    max={selectedRemaining > 0 ? selectedRemaining : undefined}
+                    type="number"
+                    value={quantity}
+                    onChange={(event) => setQuantity(Number(event.target.value))}
+                  />
+                  <button
+                    type="button"
+                    onClick={addToCart}
+                    disabled={itemId <= 0 || quantity <= 0 || (selectedItem ? selectedRemaining <= 0 || quantity > selectedRemaining : true)}
+                    className="rounded-lg bg-slate-900 px-3 py-2 text-sm font-medium text-white disabled:cursor-not-allowed disabled:bg-slate-400"
+                  >
                     Legg til
                   </button>
                 </div>
+                {selectedItem ? <p className="mt-2 text-xs text-slate-500">Tilgjengelig for valgt vare: {Math.max(0, selectedRemaining)}</p> : null}
+                {error ? <p className="mt-2 text-xs text-rose-600">{error}</p> : null}
               </section>
 
               <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">

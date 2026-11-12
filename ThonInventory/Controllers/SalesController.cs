@@ -9,14 +9,18 @@ namespace ThonInventory.Controllers;
 [Route("api/[controller]")]
 public class SalesController(ApplicationDbContext dbContext) : ControllerBase
 {
+    private const string ShrinkageCategoryPrefix = "shrinkage:";
+
     [HttpGet]
     public async Task<ActionResult<SalesLogResponse>> GetSalesLog(
         [FromQuery] string period = "month",
         [FromQuery] string type = "all",
+        [FromQuery] string category = "all",
         CancellationToken cancellationToken = default)
     {
         var normalizedPeriod = period.Trim().ToLowerInvariant();
         var normalizedType = type.Trim().ToLowerInvariant();
+        var normalizedCategory = category.Trim().ToLowerInvariant();
         var now = DateTime.UtcNow;
 
         var from = normalizedPeriod switch
@@ -42,22 +46,29 @@ public class SalesController(ApplicationDbContext dbContext) : ControllerBase
             "sale" => query.Where(entry => entry.TransactionType == InventoryTransactionType.Sale),
             "restock" => query.Where(entry => entry.TransactionType == InventoryTransactionType.Restock),
             "shrinkage" => query.Where(entry => entry.TransactionType == InventoryTransactionType.Shrinkage),
+            "order" => query.Where(entry => entry.TransactionType == InventoryTransactionType.OrderPlaced || entry.TransactionType == InventoryTransactionType.OrderConfirmed || entry.TransactionType == InventoryTransactionType.OrderRejected),
+            "orderplaced" => query.Where(entry => entry.TransactionType == InventoryTransactionType.OrderPlaced),
+            "orderconfirmed" => query.Where(entry => entry.TransactionType == InventoryTransactionType.OrderConfirmed),
+            "orderrejected" => query.Where(entry => entry.TransactionType == InventoryTransactionType.OrderRejected),
             "all" => query,
-            _ => throw new ArgumentException("Ugyldig type. Bruk 'all', 'sale', 'restock' eller 'shrinkage'.")
+            _ => throw new ArgumentException("Ugyldig type.")
+        };
+
+        query = normalizedCategory switch
+        {
+            "given_away" => query.Where(entry => entry.TransactionType == InventoryTransactionType.Shrinkage && entry.Note != null && entry.Note.StartsWith($"{ShrinkageCategoryPrefix}given_away|")),
+            "misregistered" => query.Where(entry => entry.TransactionType == InventoryTransactionType.Shrinkage && entry.Note != null && entry.Note.StartsWith($"{ShrinkageCategoryPrefix}misregistered|")),
+            "missing_or_stolen" => query.Where(entry => entry.TransactionType == InventoryTransactionType.Shrinkage && entry.Note != null && entry.Note.StartsWith($"{ShrinkageCategoryPrefix}missing_or_stolen|")),
+            "orderplaced" => query.Where(entry => entry.TransactionType == InventoryTransactionType.OrderPlaced),
+            "orderconfirmed" => query.Where(entry => entry.TransactionType == InventoryTransactionType.OrderConfirmed),
+            "orderrejected" => query.Where(entry => entry.TransactionType == InventoryTransactionType.OrderRejected),
+            "all" => query,
+            _ => query
         };
 
         var entries = await query
             .OrderByDescending(entry => entry.CreatedAt)
-            .Select(entry => new SalesLogEntryResponse(
-                entry.Id,
-                entry.ItemId,
-                entry.Item != null ? entry.Item.Name : "Ukjent vare",
-                entry.Quantity,
-                entry.UnitPrice,
-                entry.Quantity * entry.UnitPrice,
-                entry.TransactionType.ToString().ToLowerInvariant(),
-                entry.Note,
-                entry.CreatedAt))
+            .Select(entry => ToResponse(entry, entry.Item != null ? entry.Item.Name : "Ukjent vare"))
             .ToListAsync(cancellationToken);
 
         var saleEntries = entries.Where(entry => entry.Type == "sale").ToList();
@@ -67,6 +78,7 @@ public class SalesController(ApplicationDbContext dbContext) : ControllerBase
         return Ok(new SalesLogResponse(
             normalizedPeriod,
             normalizedType,
+            normalizedCategory,
             from,
             now,
             saleEntries.Sum(entry => entry.Quantity),
@@ -158,6 +170,106 @@ public class SalesController(ApplicationDbContext dbContext) : ControllerBase
             Quantity = request.Quantity,
             UnitPrice = request.UnitPrice ?? item.Price,
             TransactionType = InventoryTransactionType.Shrinkage,
+            Note = EncodeShrinkageNote(request.Category, request.Note),
+            CreatedAt = request.CreatedAt ?? DateTime.UtcNow
+        };
+
+        dbContext.SalesLogEntries.Add(entry);
+        await dbContext.SaveChangesAsync(cancellationToken);
+
+        return Ok(ToResponse(entry, item.Name));
+    }
+
+    [HttpPost("order/register")]
+    public async Task<ActionResult<SalesLogEntryResponse>> RegisterOrder([FromBody] RegisterOrderRequest request, CancellationToken cancellationToken)
+    {
+        var item = await dbContext.Items.FirstOrDefaultAsync(current => current.Id == request.ItemId, cancellationToken);
+
+        if (item is null || request.Quantity <= 0)
+        {
+            return Problem("Ugyldig vare eller antall.");
+        }
+
+        var createdAt = request.CreatedAt ?? DateTime.UtcNow;
+
+        item.IsOrdered = true;
+        item.OrderedQuantity = request.Quantity;
+        item.OrderedAtDate = createdAt;
+        item.ExpectedDeliveryDate = request.ExpectedDeliveryDate;
+
+        var entry = new SalesLogEntry
+        {
+            ItemId = item.Id,
+            Quantity = request.Quantity,
+            UnitPrice = request.UnitPrice ?? item.Price,
+            TransactionType = InventoryTransactionType.OrderPlaced,
+            Note = request.Note,
+            CreatedAt = createdAt
+        };
+
+        dbContext.SalesLogEntries.Add(entry);
+        await dbContext.SaveChangesAsync(cancellationToken);
+
+        return Ok(ToResponse(entry, item.Name));
+    }
+
+    [HttpPost("order/confirm")]
+    public async Task<ActionResult<SalesLogEntryResponse>> ConfirmOrder([FromBody] ConfirmOrderRequest request, CancellationToken cancellationToken)
+    {
+        var item = await dbContext.Items.FirstOrDefaultAsync(current => current.Id == request.ItemId, cancellationToken);
+
+        if (item is null || !item.IsOrdered || request.ReceivedQuantity <= 0)
+        {
+            return Problem("Ugyldig bestilling eller antall.");
+        }
+
+        item.Quantity += request.ReceivedQuantity;
+        item.IsMissing = false;
+        item.MissingSinceDate = null;
+        item.IsOrdered = false;
+        item.OrderedQuantity = 0;
+        item.OrderedAtDate = null;
+        item.ExpectedDeliveryDate = null;
+
+        var entry = new SalesLogEntry
+        {
+            ItemId = item.Id,
+            Quantity = request.ReceivedQuantity,
+            UnitPrice = item.Price,
+            TransactionType = InventoryTransactionType.OrderConfirmed,
+            Note = request.Note,
+            CreatedAt = request.CreatedAt ?? DateTime.UtcNow
+        };
+
+        dbContext.SalesLogEntries.Add(entry);
+        await dbContext.SaveChangesAsync(cancellationToken);
+
+        return Ok(ToResponse(entry, item.Name));
+    }
+
+    [HttpPost("order/reject")]
+    public async Task<ActionResult<SalesLogEntryResponse>> RejectOrder([FromBody] RejectOrderRequest request, CancellationToken cancellationToken)
+    {
+        var item = await dbContext.Items.FirstOrDefaultAsync(current => current.Id == request.ItemId, cancellationToken);
+
+        if (item is null || !item.IsOrdered)
+        {
+            return Problem("Fant ingen aktiv bestilling.");
+        }
+
+        var rejectedQuantity = item.OrderedQuantity > 0 ? item.OrderedQuantity : 1;
+
+        item.IsOrdered = false;
+        item.OrderedQuantity = 0;
+        item.OrderedAtDate = null;
+        item.ExpectedDeliveryDate = null;
+
+        var entry = new SalesLogEntry
+        {
+            ItemId = item.Id,
+            Quantity = rejectedQuantity,
+            UnitPrice = item.Price,
+            TransactionType = InventoryTransactionType.OrderRejected,
             Note = request.Note,
             CreatedAt = request.CreatedAt ?? DateTime.UtcNow
         };
@@ -250,8 +362,11 @@ public class SalesController(ApplicationDbContext dbContext) : ControllerBase
         return item;
     }
 
-    private static SalesLogEntryResponse ToResponse(SalesLogEntry entry, string itemName) =>
-        new(
+    private static SalesLogEntryResponse ToResponse(SalesLogEntry entry, string itemName)
+    {
+        var (category, note) = ParseCategoryAndNote(entry.TransactionType, entry.Note);
+
+        return new SalesLogEntryResponse(
             entry.Id,
             entry.ItemId,
             itemName,
@@ -259,8 +374,54 @@ public class SalesController(ApplicationDbContext dbContext) : ControllerBase
             entry.UnitPrice,
             entry.Quantity * entry.UnitPrice,
             entry.TransactionType.ToString().ToLowerInvariant(),
-            entry.Note,
+            category,
+            note,
             entry.CreatedAt);
+    }
+
+    private static string EncodeShrinkageNote(string? category, string? note)
+    {
+        var normalizedCategory = NormalizeShrinkageCategory(category);
+
+        return $"{ShrinkageCategoryPrefix}{normalizedCategory}|{note ?? string.Empty}";
+    }
+
+    private static (string Category, string? Note) ParseCategoryAndNote(InventoryTransactionType transactionType, string? note)
+    {
+        if (transactionType == InventoryTransactionType.Shrinkage)
+        {
+            if (!string.IsNullOrWhiteSpace(note) && note.StartsWith(ShrinkageCategoryPrefix, StringComparison.OrdinalIgnoreCase))
+            {
+                var payload = note[ShrinkageCategoryPrefix.Length..];
+                var separatorIndex = payload.IndexOf('|');
+
+                if (separatorIndex >= 0)
+                {
+                    var category = payload[..separatorIndex];
+                    var cleanNote = payload[(separatorIndex + 1)..];
+                    return (category, string.IsNullOrWhiteSpace(cleanNote) ? null : cleanNote);
+                }
+
+                return (payload, null);
+            }
+
+            return ("uncategorized", note);
+        }
+
+        var transactionCategory = transactionType.ToString().ToLowerInvariant();
+        return (transactionCategory, note);
+    }
+
+    private static string NormalizeShrinkageCategory(string? category)
+    {
+        return category?.Trim().ToLowerInvariant() switch
+        {
+            "given_away" => "given_away",
+            "misregistered" => "misregistered",
+            "missing_or_stolen" => "missing_or_stolen",
+            _ => "misregistered"
+        };
+    }
 }
 
 public record RegisterSaleRequest(
@@ -274,6 +435,26 @@ public record RegisterInventoryChangeRequest(
     int ItemId,
     int Quantity,
     decimal? UnitPrice,
+    string? Category,
+    string? Note,
+    DateTime? CreatedAt);
+
+public record RegisterOrderRequest(
+    int ItemId,
+    int Quantity,
+    DateTime? ExpectedDeliveryDate,
+    decimal? UnitPrice,
+    string? Note,
+    DateTime? CreatedAt);
+
+public record ConfirmOrderRequest(
+    int ItemId,
+    int ReceivedQuantity,
+    string? Note,
+    DateTime? CreatedAt);
+
+public record RejectOrderRequest(
+    int ItemId,
     string? Note,
     DateTime? CreatedAt);
 
@@ -294,6 +475,7 @@ public record DemoCheckoutResponse(
 public record SalesLogResponse(
     string Period,
     string Type,
+    string Category,
     DateTime From,
     DateTime To,
     int TotalUnitsSold,
@@ -310,5 +492,6 @@ public record SalesLogEntryResponse(
     decimal UnitPrice,
     decimal Total,
     string Type,
+    string Category,
     string? Note,
     DateTime CreatedAt);

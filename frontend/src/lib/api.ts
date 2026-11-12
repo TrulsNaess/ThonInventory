@@ -23,6 +23,10 @@ export async function apiPost<TResponse, TRequest>(path: string, body: TRequest)
   });
 }
 
-export function buildSalesLogPath(period: "today" | "week" | "month", type: "all" | "sale" | "restock" | "shrinkage" = "all") {
-  return `/api/sales?period=${period}&type=${type}`;
+export function buildSalesLogPath(
+  period: "today" | "week" | "month",
+  type: "all" | "sale" | "restock" | "shrinkage" | "order" | "orderplaced" | "orderconfirmed" | "orderrejected" = "all",
+  category: "all" | "given_away" | "misregistered" | "missing_or_stolen" | "orderplaced" | "orderconfirmed" | "orderrejected" = "all",
+) {
+  return `/api/sales?period=${period}&type=${type}&category=${category}`;
 }

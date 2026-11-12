@@ -63,9 +63,9 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     [
         new() { Id = 1, CategoryId = 1, Name = "Coca-Cola", DisplayOrder = 1, Quantity = 48, Price = 58m },
         new() { Id = 2, CategoryId = 1, Name = "Coca-Cola Zero", DisplayOrder = 2, Quantity = 44, Price = 58m },
-        new() { Id = 3, CategoryId = 1, Name = "Fanta", DisplayOrder = 3, Quantity = 26, Price = 58m, IsOrdered = true, OrderedAtDate = new DateTime(2026, 10, 27, 9, 0, 0, DateTimeKind.Utc), ExpectedDeliveryDate = new DateTime(2026, 10, 30, 11, 0, 0, DateTimeKind.Utc) },
+        new() { Id = 3, CategoryId = 1, Name = "Fanta", DisplayOrder = 3, Quantity = 26, Price = 58m, IsOrdered = true, OrderedQuantity = 12, OrderedAtDate = new DateTime(2026, 10, 27, 9, 0, 0, DateTimeKind.Utc), ExpectedDeliveryDate = new DateTime(2026, 10, 30, 11, 0, 0, DateTimeKind.Utc) },
         new() { Id = 4, CategoryId = 1, Name = "Sprite", DisplayOrder = 4, Quantity = 31, Price = 58m },
-        new() { Id = 5, CategoryId = 1, Name = "Eplemost", DisplayOrder = 5, Quantity = 14, Price = 89m, IsOrdered = true, OrderedAtDate = new DateTime(2026, 10, 27, 9, 5, 0, DateTimeKind.Utc), ExpectedDeliveryDate = new DateTime(2026, 10, 31, 12, 0, 0, DateTimeKind.Utc) },
+        new() { Id = 5, CategoryId = 1, Name = "Eplemost", DisplayOrder = 5, Quantity = 14, Price = 89m, IsOrdered = true, OrderedQuantity = 8, OrderedAtDate = new DateTime(2026, 10, 27, 9, 5, 0, DateTimeKind.Utc), ExpectedDeliveryDate = new DateTime(2026, 10, 31, 12, 0, 0, DateTimeKind.Utc) },
         new() { Id = 6, CategoryId = 1, Name = "Mineralvann", DisplayOrder = 6, Quantity = 23, Price = 58m },
         new() { Id = 7, CategoryId = 1, Name = "Mineralvann med kullsyre", DisplayOrder = 7, Quantity = 19, Price = 58m },
         new() { Id = 8, CategoryId = 1, Name = "Red Bull", DisplayOrder = 8, Quantity = 12, Price = 39m },
@@ -73,7 +73,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
 
         new() { Id = 10, CategoryId = 2, Name = "Stratos", DisplayOrder = 1, Quantity = 51, Price = 59m },
         new() { Id = 11, CategoryId = 2, Name = "Melkesjokolade", DisplayOrder = 2, Quantity = 39, Price = 59m },
-        new() { Id = 12, CategoryId = 2, Name = "Sørlandschips", DisplayOrder = 3, Quantity = 22, Price = 59m, IsOrdered = true, OrderedAtDate = new DateTime(2026, 10, 25, 13, 0, 0, DateTimeKind.Utc), ExpectedDeliveryDate = new DateTime(2026, 10, 29, 10, 0, 0, DateTimeKind.Utc) },
+        new() { Id = 12, CategoryId = 2, Name = "Sørlandschips", DisplayOrder = 3, Quantity = 22, Price = 59m, IsOrdered = true, OrderedQuantity = 10, OrderedAtDate = new DateTime(2026, 10, 25, 13, 0, 0, DateTimeKind.Utc), ExpectedDeliveryDate = new DateTime(2026, 10, 29, 10, 0, 0, DateTimeKind.Utc) },
         new() { Id = 13, CategoryId = 2, Name = "Sørlandschips (små poser)", DisplayOrder = 4, Quantity = 28, Price = 0m },
         new() { Id = 14, CategoryId = 2, Name = "Chillinøtter", DisplayOrder = 5, Quantity = 18, Price = 42m },
         new() { Id = 15, CategoryId = 2, Name = "Peanøtter", DisplayOrder = 6, Quantity = 16, Price = 42m },
@@ -88,13 +88,13 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
         new() { Id = 23, CategoryId = 3, Name = "Bulmers Cider 0.5l", DisplayOrder = 5, Quantity = 17, Price = 159m },
 
         new() { Id = 24, CategoryId = 3, Name = "Prosecco 375ml (små flaske)", DisplayOrder = 6, Quantity = 34, Price = 297m },
-        new() { Id = 25, CategoryId = 3, Name = "Prosecco 750ml", DisplayOrder = 7, Quantity = 12, Price = 624m, IsOrdered = true, OrderedAtDate = new DateTime(2026, 10, 24, 14, 30, 0, 0, DateTimeKind.Utc), ExpectedDeliveryDate = new DateTime(2026, 10, 30, 14, 0, 0, DateTimeKind.Utc) },
+        new() { Id = 25, CategoryId = 3, Name = "Prosecco 750ml", DisplayOrder = 7, Quantity = 12, Price = 624m, IsOrdered = true, OrderedQuantity = 6, OrderedAtDate = new DateTime(2026, 10, 24, 14, 30, 0, 0, DateTimeKind.Utc), ExpectedDeliveryDate = new DateTime(2026, 10, 30, 14, 0, 0, DateTimeKind.Utc) },
         new() { Id = 26, CategoryId = 3, Name = "Rødvin 37.5cl (små flaske)", DisplayOrder = 8, Quantity = 20, Price = 315m },
         new() { Id = 27, CategoryId = 3, Name = "Rødvin 750ml", DisplayOrder = 9, Quantity = 15, Price = 572m },
         new() { Id = 28, CategoryId = 3, Name = "Hvitvin 375ml (små flaske)", DisplayOrder = 10, Quantity = 16, Price = 315m },
         new() { Id = 29, CategoryId = 3, Name = "Hvitvin 750ml", DisplayOrder = 11, Quantity = 11, Price = 572m },
 
-        new() { Id = 30, CategoryId = 3, Name = "Jameson", DisplayOrder = 12, Quantity = 8, Price = 126m, IsOrdered = true, OrderedAtDate = new DateTime(2026, 10, 22, 15, 0, 0, DateTimeKind.Utc), ExpectedDeliveryDate = new DateTime(2026, 10, 31, 12, 0, 0, DateTimeKind.Utc) },
+        new() { Id = 30, CategoryId = 3, Name = "Jameson", DisplayOrder = 12, Quantity = 8, Price = 126m, IsOrdered = true, OrderedQuantity = 5, OrderedAtDate = new DateTime(2026, 10, 22, 15, 0, 0, DateTimeKind.Utc), ExpectedDeliveryDate = new DateTime(2026, 10, 31, 12, 0, 0, DateTimeKind.Utc) },
         new() { Id = 31, CategoryId = 3, Name = "Rom&Cola", DisplayOrder = 13, Quantity = 9, Price = 167m },
         new() { Id = 32, CategoryId = 3, Name = "Cognac", DisplayOrder = 14, Quantity = 4, Price = 126m },
         new() { Id = 33, CategoryId = 3, Name = "Gin", DisplayOrder = 15, Quantity = 7, Price = 126m },

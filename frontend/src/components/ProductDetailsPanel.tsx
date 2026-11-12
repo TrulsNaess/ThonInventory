@@ -7,8 +7,11 @@ import {
     buildSalesLogPath,
 } from "@/lib/api";
 import type {
+    ConfirmOrderRequest,
     InventoryItem,
     RegisterInventoryChangeRequest,
+    RegisterOrderRequest,
+    RejectOrderRequest,
     SalesLogEntry,
     SalesLogResponse,
 } from "@/types/inventory";
@@ -20,7 +23,7 @@ type Props = {
     onClose: () => void;
 };
 
-type ActionMode = "restock" | "shrinkage" | null;
+type ActionMode = "restock" | "shrinkage";
 
 function formatNok(value: number) {
     if (value === 0) return "Gratis for medlemmer";
@@ -78,12 +81,19 @@ function getStatus(item: InventoryItem) {
 function activityLabel(entry: SalesLogEntry) {
     if (entry.type === "restock") return "Påfyll";
     if (entry.type === "shrinkage") return "Svinn";
+    if (entry.type === "orderplaced") return "Bestilling registrert";
+    if (entry.type === "orderconfirmed") return "Bestilling bekreftet";
+    if (entry.type === "orderrejected") return "Bestilling avkreftet";
     return "Salg";
 }
 
 function activityAmount(entry: SalesLogEntry) {
-    if (entry.type === "restock") {
+    if (entry.type === "restock" || entry.type === "orderconfirmed") {
         return `+${entry.quantity}`;
+    }
+
+    if (entry.type === "orderplaced" || entry.type === "orderrejected") {
+        return `${entry.quantity}`;
     }
 
     return `-${entry.quantity}`;
@@ -96,9 +106,13 @@ export default function ProductDetailsPanel({
     onClose,
 }: Props) {
     const [actionMode, setActionMode] =
-        useState<ActionMode>(null);
+        useState<ActionMode | null>(null);
 
     const [quantity, setQuantity] = useState(1);
+    const [shrinkCategory, setShrinkCategory] = useState<"given_away" | "misregistered" | "missing_or_stolen">("misregistered");
+    const [orderQuantity, setOrderQuantity] = useState(item.orderedQuantity > 0 ? item.orderedQuantity : 1);
+    const [receivedQuantity, setReceivedQuantity] = useState(item.orderedQuantity > 0 ? item.orderedQuantity : 1);
+    const [expectedDeliveryDate, setExpectedDeliveryDate] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const [activities, setActivities] = useState<
@@ -199,6 +213,10 @@ export default function ProductDetailsPanel({
         const body: RegisterInventoryChangeRequest = {
             itemId: item.id,
             quantity,
+            category:
+                actionMode === "shrinkage"
+                    ? shrinkCategory
+                    : undefined,
             note:
                 actionMode === "restock"
                     ? "Påfyll registrert fra vareoversikt"
@@ -217,6 +235,81 @@ export default function ProductDetailsPanel({
                 "Handlingen kunne ikke registreres. Prøv igjen.",
             );
 
+            setIsSubmitting(false);
+        }
+    }
+
+    async function registerOrder() {
+        if (orderQuantity <= 0) return;
+
+        setError(null);
+        setIsSubmitting(true);
+
+        try {
+            const body: RegisterOrderRequest = {
+                itemId: item.id,
+                quantity: orderQuantity,
+                expectedDeliveryDate: expectedDeliveryDate
+                    ? new Date(expectedDeliveryDate).toISOString()
+                    : undefined,
+                note: "Bestilling registrert fra vareoversikt",
+            };
+
+            await apiPost<SalesLogEntry, RegisterOrderRequest>(
+                "/api/sales/order/register",
+                body,
+            );
+
+            window.location.reload();
+        } catch {
+            setError("Bestillingen kunne ikke registreres. Prøv igjen.");
+            setIsSubmitting(false);
+        }
+    }
+
+    async function confirmOrder() {
+        if (receivedQuantity <= 0) return;
+
+        setError(null);
+        setIsSubmitting(true);
+
+        try {
+            const body: ConfirmOrderRequest = {
+                itemId: item.id,
+                receivedQuantity,
+                note: "Bestilling bekreftet fra vareoversikt",
+            };
+
+            await apiPost<SalesLogEntry, ConfirmOrderRequest>(
+                "/api/sales/order/confirm",
+                body,
+            );
+
+            window.location.reload();
+        } catch {
+            setError("Kunne ikke bekrefte bestillingen. Prøv igjen.");
+            setIsSubmitting(false);
+        }
+    }
+
+    async function rejectOrder() {
+        setError(null);
+        setIsSubmitting(true);
+
+        try {
+            const body: RejectOrderRequest = {
+                itemId: item.id,
+                note: "Bestilling avkreftet fra vareoversikt",
+            };
+
+            await apiPost<SalesLogEntry, RejectOrderRequest>(
+                "/api/sales/order/reject",
+                body,
+            );
+
+            window.location.reload();
+        } catch {
+            setError("Kunne ikke avkrefte bestillingen. Prøv igjen.");
             setIsSubmitting(false);
         }
     }
@@ -318,7 +411,9 @@ export default function ProductDetailsPanel({
                                 </p>
 
                                 <p className="mt-1 font-medium text-slate-800">
-                                    {item.isOrdered ? "Bestilt" : "Ikke bestilt"}
+                                    {item.isOrdered
+                                        ? `Bestilt (${item.orderedQuantity} stk)`
+                                        : "Ikke bestilt"}
                                 </p>
                             </div>
 
@@ -362,6 +457,77 @@ export default function ProductDetailsPanel({
                         <p className="mb-4 text-xs font-semibold uppercase tracking-[0.14em] text-slate-400">
                             Handlinger
                         </p>
+
+                        {item.isOrdered ? (
+                            <div className="mb-4 rounded-xl border border-amber-200 bg-amber-50 p-4">
+                                <p className="text-xs font-semibold uppercase tracking-[0.12em] text-amber-700">
+                                    Aktiv bestilling
+                                </p>
+                                <p className="mt-1 text-sm text-slate-700">
+                                    Forventet levering: {formatDate(item.expectedDeliveryDate)}
+                                </p>
+                                <div className="mt-3 flex gap-2">
+                                    <input
+                                        type="number"
+                                        min={1}
+                                        value={receivedQuantity}
+                                        onChange={(event) =>
+                                            setReceivedQuantity(Number(event.target.value))
+                                        }
+                                        className="w-24 rounded-lg border border-amber-200 bg-white px-3 py-2 text-sm outline-none focus:border-amber-400"
+                                    />
+                                    <button
+                                        type="button"
+                                        disabled={isSubmitting || receivedQuantity <= 0}
+                                        onClick={() => void confirmOrder()}
+                                        className="rounded-lg bg-emerald-600 px-3 py-2 text-xs font-semibold text-white disabled:opacity-50"
+                                    >
+                                        Bekreft mottatt
+                                    </button>
+                                    <button
+                                        type="button"
+                                        disabled={isSubmitting}
+                                        onClick={() => void rejectOrder()}
+                                        className="rounded-lg bg-rose-600 px-3 py-2 text-xs font-semibold text-white disabled:opacity-50"
+                                    >
+                                        Avkreft
+                                    </button>
+                                </div>
+                            </div>
+                        ) : (
+                            <div className="mb-4 rounded-xl border border-blue-200 bg-blue-50 p-4">
+                                <p className="text-xs font-semibold uppercase tracking-[0.12em] text-blue-700">
+                                    Registrer bestilling
+                                </p>
+                                <div className="mt-2 flex flex-wrap gap-2">
+                                    <input
+                                        type="number"
+                                        min={1}
+                                        value={orderQuantity}
+                                        onChange={(event) =>
+                                            setOrderQuantity(Number(event.target.value))
+                                        }
+                                        className="w-24 rounded-lg border border-blue-200 bg-white px-3 py-2 text-sm outline-none focus:border-blue-400"
+                                    />
+                                    <input
+                                        type="date"
+                                        value={expectedDeliveryDate}
+                                        onChange={(event) =>
+                                            setExpectedDeliveryDate(event.target.value)
+                                        }
+                                        className="rounded-lg border border-blue-200 bg-white px-3 py-2 text-sm outline-none focus:border-blue-400"
+                                    />
+                                    <button
+                                        type="button"
+                                        disabled={isSubmitting || orderQuantity <= 0}
+                                        onClick={() => void registerOrder()}
+                                        className="rounded-lg bg-blue-600 px-3 py-2 text-xs font-semibold text-white disabled:opacity-50"
+                                    >
+                                        Registrer bestilt
+                                    </button>
+                                </div>
+                            </div>
+                        )}
 
                         <div className="grid grid-cols-2 gap-3">
                             <button
@@ -426,39 +592,57 @@ export default function ProductDetailsPanel({
                                         : "Antall som skal registreres som svinn"}
                                 </label>
 
-                                <div className="mt-2 flex gap-2">
-                                    <input
-                                        type="number"
-                                        min={1}
-                                        max={
-                                            actionMode === "shrinkage"
-                                                ? item.quantity
-                                                : undefined
-                                        }
-                                        value={quantity}
-                                        onChange={(event) =>
-                                            setQuantity(
-                                                Number(event.target.value),
-                                            )
-                                        }
-                                        className="min-w-0 flex-1 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:border-slate-500"
-                                    />
+                                <div className="mt-2 flex flex-col gap-2">
+                                    {actionMode === "shrinkage" ? (
+                                        <select
+                                            className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:border-slate-500"
+                                            value={shrinkCategory}
+                                            onChange={(event) =>
+                                                setShrinkCategory(
+                                                    event.target.value as "given_away" | "misregistered" | "missing_or_stolen",
+                                                )
+                                            }
+                                        >
+                                            <option value="given_away">Gis bort</option>
+                                            <option value="misregistered">Feilregistrert</option>
+                                            <option value="missing_or_stolen">Borte / stjålet</option>
+                                        </select>
+                                    ) : null}
 
-                                    <button
-                                        type="button"
-                                        disabled={
-                                            isSubmitting || quantity <= 0
-                                        }
-                                        onClick={() => void submitAction()}
-                                        className={`rounded-lg px-4 py-2 text-sm font-semibold text-white transition disabled:opacity-50 ${actionMode === "restock"
-                                                ? "bg-emerald-600 hover:bg-emerald-700"
-                                                : "bg-rose-600 hover:bg-rose-700"
-                                            }`}
-                                    >
-                                        {isSubmitting
-                                            ? "Lagrer..."
-                                            : "Bekreft"}
-                                    </button>
+                                    <div className="flex gap-2">
+                                        <input
+                                            type="number"
+                                            min={1}
+                                            max={
+                                                actionMode === "shrinkage"
+                                                    ? item.quantity
+                                                    : undefined
+                                            }
+                                            value={quantity}
+                                            onChange={(event) =>
+                                                setQuantity(
+                                                    Number(event.target.value),
+                                                )
+                                            }
+                                            className="min-w-0 flex-1 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:border-slate-500"
+                                        />
+
+                                        <button
+                                            type="button"
+                                            disabled={
+                                                isSubmitting || quantity <= 0
+                                            }
+                                            onClick={() => void submitAction()}
+                                            className={`rounded-lg px-4 py-2 text-sm font-semibold text-white transition disabled:opacity-50 ${actionMode === "restock"
+                                                    ? "bg-emerald-600 hover:bg-emerald-700"
+                                                    : "bg-rose-600 hover:bg-rose-700"
+                                                }`}
+                                        >
+                                            {isSubmitting
+                                                ? "Lagrer..."
+                                                : "Bekreft"}
+                                        </button>
+                                    </div>
                                 </div>
 
                                 {error ? (

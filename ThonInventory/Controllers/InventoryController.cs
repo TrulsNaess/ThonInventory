@@ -28,6 +28,8 @@ public class InventoryController(ApplicationDbContext dbContext) : ControllerBas
                         item.Quantity,
                         item.Price * item.Quantity,
                         item.IsOrdered,
+                        item.OrderedQuantity,
+                        item.ExpectedDeliveryDate != null && item.ExpectedDeliveryDate <= DateTime.UtcNow,
                         item.Quantity == 0,
                         item.IsMissing && item.Quantity > 0,
                         item.MissingSinceDate,
@@ -46,7 +48,7 @@ public class InventoryController(ApplicationDbContext dbContext) : ControllerBas
             allItems.Count(item => item.IsOrdered),
             allItems.Sum(item => item.StockValue));
 
-        var alerts = allItems
+        var lowStockAlerts = allItems
             .Where(item => item.Quantity < LowStockThreshold)
             .OrderBy(item => item.Quantity)
             .Select(item => new LowStockAlertResponse(
@@ -54,7 +56,19 @@ public class InventoryController(ApplicationDbContext dbContext) : ControllerBas
                 item.Name,
                 item.Quantity,
                 LowStockThreshold,
-                $"{item.Name} har lav beholdning ({item.Quantity})."))
+                $"{item.Name} har lav beholdning ({item.Quantity})."));
+
+        var orderDueAlerts = allItems
+            .Where(item => item.IsOrdered && item.ExpectedDeliveryDate != null && item.ExpectedDeliveryDate <= DateTime.UtcNow)
+            .Select(item => new LowStockAlertResponse(
+                item.Id,
+                item.Name,
+                item.OrderedQuantity,
+                0,
+                $"Bestilling for {item.Name} skulle ankommet {item.ExpectedDeliveryDate:dd.MM.yyyy}. Bekreft eller avkreft bestillingen."));
+
+        var alerts = lowStockAlerts
+            .Concat(orderDueAlerts)
             .ToList();
 
         return Ok(new InventoryResponse(categories, summary, alerts));
@@ -93,6 +107,8 @@ public record ItemResponse(
     int Quantity,
     decimal StockValue,
     bool IsOrdered,
+    int OrderedQuantity,
+    bool IsOrderOverdue,
     bool IsOutOfStock,
     bool IsDiscrepancy,
     DateTime? MissingSinceDate,

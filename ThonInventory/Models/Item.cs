@@ -29,6 +29,9 @@ public class Item
 
     public bool IsOrdered { get; set; }
 
+    [Range(0, int.MaxValue)]
+    public int OrderedQuantity { get; set; }
+
     public DateTime? OrderedAtDate { get; set; }
 
     public DateTime? ExpectedDeliveryDate { get; set; }

@@ -29,6 +29,7 @@ export default function InventoryDashboard({ data }: Props) {
     const [restockQty, setRestockQty] = useState<number>(1);
     const [shrinkItemId, setShrinkItemId] = useState<number>(0);
     const [shrinkQty, setShrinkQty] = useState<number>(1);
+    const [shrinkCategory, setShrinkCategory] = useState<"given_away" | "misregistered" | "missing_or_stolen">("misregistered");
 
     const categories = data?.categories ?? [];
     const alerts = data?.alerts ?? [];
@@ -94,13 +95,6 @@ export default function InventoryDashboard({ data }: Props) {
                         </div>
 
                         <div className="flex items-center gap-3">
-                            <Link
-                                href="/demo-kasse"
-                                className="hidden rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-700 shadow-sm transition hover:-translate-y-0.5 hover:border-blue-300 hover:shadow-md sm:block"
-                            >
-                                Demo-Kasse
-                            </Link>
-
                             <button
                                 type="button"
                                 onClick={() => setIsAlertsOpen((current) => !current)}
@@ -146,7 +140,7 @@ export default function InventoryDashboard({ data }: Props) {
                                         <ul className="mt-3 space-y-2">
                                             {alerts.map((alert) => (
                                                 <li
-                                                    key={alert.itemId}
+                                                    key={`${alert.itemId}-${alert.message}`}
                                                     className="rounded-xl bg-white/70 px-3 py-2"
                                                 >
                                                     <span className="font-medium">
@@ -295,7 +289,8 @@ export default function InventoryDashboard({ data }: Props) {
                                                 {
                                                     itemId: shrinkItemId,
                                                     quantity: shrinkQty,
-                                                    note: "Svinn",
+                                                    category: shrinkCategory,
+                                                    note: "Svinn registrert fra dashboard",
                                                 },
                                             );
                                         }
@@ -330,6 +325,20 @@ export default function InventoryDashboard({ data }: Props) {
                                                     {item.name}
                                                 </option>
                                             ))}
+                                        </select>
+
+                                        <select
+                                            className="w-full rounded-xl border border-rose-200 bg-white px-3 py-2.5 text-sm outline-none transition focus:border-rose-400 focus:ring-2 focus:ring-rose-100 sm:w-44"
+                                            value={shrinkCategory}
+                                            onChange={(event) =>
+                                                setShrinkCategory(
+                                                    event.target.value as "given_away" | "misregistered" | "missing_or_stolen",
+                                                )
+                                            }
+                                        >
+                                            <option value="given_away">Gis bort</option>
+                                            <option value="misregistered">Feilregistrert</option>
+                                            <option value="missing_or_stolen">Borte / stjålet</option>
                                         </select>
 
                                         <input
@@ -400,6 +409,15 @@ export default function InventoryDashboard({ data }: Props) {
                             </section>
 
                             <InventoryList categories={filteredCategories} />
+
+                            <div className="fixed bottom-4 left-4 z-20">
+                                <Link
+                                    href="/demo-kasse"
+                                    className="inline-flex rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-700 shadow-sm transition hover:-translate-y-0.5 hover:border-blue-300 hover:shadow-md"
+                                >
+                                    Demo-Kasse
+                                </Link>
+                            </div>
                         </>
                     )}
                 </div>

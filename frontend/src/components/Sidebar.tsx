@@ -5,8 +5,11 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const links = [
-  { href: "/", label: "Lager" },
-  { href: "/sales-log", label: "Salgslogg" },
+  { href: "/", label: "Varebeholdning i resepsjon" },
+  { href: "/resepsjonslager", label: "Resepsjonslager" },
+  { href: "/backoffice-lager", label: "Backoffice lager" },
+  { href: "/maintenance-lager", label: "Maintenance lager" },
+  { href: "/sales-log", label: "Logg" },
   { href: "/demo-kasse", label: "Demo-Kasse" },
 ];
 

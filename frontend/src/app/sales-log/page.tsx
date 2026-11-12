@@ -14,6 +14,20 @@ const typeOptions = [
   { value: "sale", label: "Salg" },
   { value: "shrinkage", label: "Svinn" },
   { value: "restock", label: "Påfyll" },
+  { value: "order", label: "Bestillinger" },
+  { value: "orderplaced", label: "Bestilling registrert" },
+  { value: "orderconfirmed", label: "Bestilling bekreftet" },
+  { value: "orderrejected", label: "Bestilling avkreftet" },
+] as const;
+
+const categoryOptions = [
+  { value: "all", label: "Alle kategorier" },
+  { value: "given_away", label: "Svinn: Gis bort" },
+  { value: "misregistered", label: "Svinn: Feilregistrert" },
+  { value: "missing_or_stolen", label: "Svinn: Borte / stjålet" },
+  { value: "orderplaced", label: "Bestilling registrert" },
+  { value: "orderconfirmed", label: "Bestilling bekreftet" },
+  { value: "orderrejected", label: "Bestilling avkreftet" },
 ] as const;
 
 type PeriodValue = (typeof periodOptions)[number]["value"];
@@ -37,21 +51,46 @@ function formatDate(value: string) {
   }).format(new Date(value));
 }
 
+function formatType(type: string) {
+  if (type === "sale") return "Salg";
+  if (type === "restock") return "Påfyll";
+  if (type === "shrinkage") return "Svinn";
+  if (type === "orderplaced") return "Bestilling registrert";
+  if (type === "orderconfirmed") return "Bestilling bekreftet";
+  if (type === "orderrejected") return "Bestilling avkreftet";
+  return type;
+}
+
+function formatCategory(category: string) {
+  if (category === "given_away") return "Gis bort";
+  if (category === "misregistered") return "Feilregistrert";
+  if (category === "missing_or_stolen") return "Borte / stjålet";
+  if (category === "orderplaced") return "Bestilling registrert";
+  if (category === "orderconfirmed") return "Bestilling bekreftet";
+  if (category === "orderrejected") return "Bestilling avkreftet";
+  if (category === "sale") return "Salg";
+  if (category === "restock") return "Påfyll";
+  if (category === "shrinkage") return "Svinn";
+  return category;
+}
+
 export default async function SalesLogPage({
   searchParams,
 }: {
-  searchParams?: Promise<{ period?: string; type?: string }>;
+  searchParams?: Promise<{ period?: string; type?: string; category?: string }>;
 }) {
   const params = (await searchParams) ?? {};
   const requestedPeriod = params.period;
   const requestedType = params.type;
+  const requestedCategory = params.category;
   const period: PeriodValue = requestedPeriod === "today" || requestedPeriod === "week" || requestedPeriod === "month" ? requestedPeriod : "month";
-  const type: TypeValue = requestedType === "sale" || requestedType === "restock" || requestedType === "shrinkage" || requestedType === "all" ? requestedType : "all";
+  const type: TypeValue = requestedType === "all" || requestedType === "sale" || requestedType === "restock" || requestedType === "shrinkage" || requestedType === "order" || requestedType === "orderplaced" || requestedType === "orderconfirmed" || requestedType === "orderrejected" ? requestedType : "all";
+  const category = requestedCategory === "all" || requestedCategory === "given_away" || requestedCategory === "misregistered" || requestedCategory === "missing_or_stolen" || requestedCategory === "orderplaced" || requestedCategory === "orderconfirmed" || requestedCategory === "orderrejected" ? requestedCategory : "all";
 
   let data: SalesLogResponse | null = null;
 
   try {
-    data = await apiFetch<SalesLogResponse>(buildSalesLogPath(period, type));
+    data = await apiFetch<SalesLogResponse>(buildSalesLogPath(period, type, category));
   } catch {
     data = null;
   }
@@ -88,7 +127,7 @@ export default async function SalesLogPage({
                 return (
                   <Link
                     key={option.value}
-                    href={`/sales-log?period=${option.value}&type=${type}`}
+                    href={`/sales-log?period=${option.value}&type=${type}&category=${category}`}
                     className={isActive ? "rounded-lg bg-slate-900 px-3 py-1.5 text-xs font-medium text-white" : "rounded-lg bg-slate-100 px-3 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-200"}
                   >
                     {option.label}
@@ -103,8 +142,23 @@ export default async function SalesLogPage({
                 return (
                   <Link
                     key={option.value}
-                    href={`/sales-log?period=${period}&type=${option.value}`}
+                    href={`/sales-log?period=${period}&type=${option.value}&category=${category}`}
                     className={isActive ? "rounded-lg bg-emerald-600 px-3 py-1.5 text-xs font-medium text-white" : "rounded-lg bg-slate-100 px-3 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-200"}
+                  >
+                    {option.label}
+                  </Link>
+                );
+              })}
+            </div>
+            <div className="mt-3 flex flex-wrap items-center gap-2">
+              {categoryOptions.map((option) => {
+                const isActive = category === option.value;
+
+                return (
+                  <Link
+                    key={option.value}
+                    href={`/sales-log?period=${period}&type=${type}&category=${option.value}`}
+                    className={isActive ? "rounded-lg bg-indigo-600 px-3 py-1.5 text-xs font-medium text-white" : "rounded-lg bg-slate-100 px-3 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-200"}
                   >
                     {option.label}
                   </Link>
@@ -146,6 +200,7 @@ export default async function SalesLogPage({
                       <tr>
                         <th className="px-5 py-3 font-medium">Tidspunkt</th>
                         <th className="px-5 py-3 font-medium">Type</th>
+                        <th className="px-5 py-3 font-medium">Kategori</th>
                         <th className="px-5 py-3 font-medium">Vare</th>
                         <th className="px-5 py-3 font-medium">Antall</th>
                         <th className="px-5 py-3 font-medium">Enhetspris</th>
@@ -157,7 +212,8 @@ export default async function SalesLogPage({
                       {data.entries.map((entry) => (
                         <tr key={entry.id} className="hover:bg-slate-50/70">
                           <td className="px-5 py-4 text-slate-600">{formatDate(entry.createdAt)}</td>
-                          <td className="px-5 py-4 text-slate-700">{entry.type}</td>
+                          <td className="px-5 py-4 text-slate-700">{formatType(entry.type)}</td>
+                          <td className="px-5 py-4 text-slate-700">{formatCategory(entry.category)}</td>
                           <td className="px-5 py-4 font-medium text-slate-900">{entry.itemName}</td>
                           <td className="px-5 py-4 text-slate-700">{entry.quantity}</td>
                           <td className="px-5 py-4 text-slate-700">{formatNok(entry.unitPrice)}</td>
