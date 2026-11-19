@@ -14,8 +14,12 @@ public class InventoryController(ApplicationDbContext dbContext) : ControllerBas
     public async Task<ActionResult<InventoryResponse>> GetInventory(CancellationToken cancellationToken)
     {
         var categories = await dbContext.Categories
-            .AsNoTracking()
-            .OrderBy(category => category.DisplayOrder)
+    .AsNoTracking()
+    .Where(category =>
+        category.Name != "RESEPSJON" &&
+        category.Name != "BACKOFFICE" &&
+        category.Name != "MAINTENANCE")
+    .OrderBy(category => category.DisplayOrder)
             .Select(category => new CategoryResponse(
                 category.Id,
                 category.Name,

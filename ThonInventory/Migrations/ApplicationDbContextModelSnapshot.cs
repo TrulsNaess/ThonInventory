@@ -69,6 +69,24 @@ namespace ThonInventory.Migrations
                             Id = 4,
                             DisplayOrder = 4,
                             Name = "KIOSK"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            DisplayOrder = 5,
+                            Name = "RESEPSJON"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            DisplayOrder = 6,
+                            Name = "BACKOFFICE"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            DisplayOrder = 7,
+                            Name = "MAINTENANCE"
                         });
                 });
 
@@ -664,6 +682,546 @@ namespace ThonInventory.Migrations
                             OrderedQuantity = 0,
                             Price = 79m,
                             Quantity = 7
+                        },
+                        new
+                        {
+                            Id = 100,
+                            CategoryId = 5,
+                            DisplayOrder = 1,
+                            IsMissing = false,
+                            IsOrdered = false,
+                            Name = "Varmtvannskokere",
+                            OrderedQuantity = 0,
+                            Price = 0m,
+                            Quantity = 3
+                        },
+                        new
+                        {
+                            Id = 101,
+                            CategoryId = 5,
+                            DisplayOrder = 2,
+                            IsMissing = false,
+                            IsOrdered = false,
+                            Name = "Grønn te",
+                            OrderedQuantity = 0,
+                            Price = 0m,
+                            Quantity = 48
+                        },
+                        new
+                        {
+                            Id = 102,
+                            CategoryId = 5,
+                            DisplayOrder = 3,
+                            IsMissing = false,
+                            IsOrdered = false,
+                            Name = "Rød te",
+                            OrderedQuantity = 0,
+                            Price = 0m,
+                            Quantity = 42
+                        },
+                        new
+                        {
+                            Id = 103,
+                            CategoryId = 5,
+                            DisplayOrder = 4,
+                            IsMissing = false,
+                            IsOrdered = false,
+                            Name = "Gul te",
+                            OrderedQuantity = 0,
+                            Price = 0m,
+                            Quantity = 28
+                        },
+                        new
+                        {
+                            Id = 104,
+                            CategoryId = 5,
+                            DisplayOrder = 5,
+                            IsMissing = false,
+                            IsOrdered = false,
+                            Name = "Oransje te",
+                            OrderedQuantity = 0,
+                            Price = 0m,
+                            Quantity = 25
+                        },
+                        new
+                        {
+                            Id = 105,
+                            CategoryId = 5,
+                            DisplayOrder = 6,
+                            IsMissing = false,
+                            IsOrdered = false,
+                            Name = "Kakao",
+                            OrderedQuantity = 0,
+                            Price = 0m,
+                            Quantity = 36
+                        },
+                        new
+                        {
+                            Id = 106,
+                            CategoryId = 5,
+                            DisplayOrder = 7,
+                            IsMissing = false,
+                            IsOrdered = false,
+                            Name = "Kaffe",
+                            OrderedQuantity = 0,
+                            Price = 0m,
+                            Quantity = 60
+                        },
+                        new
+                        {
+                            Id = 107,
+                            CategoryId = 5,
+                            DisplayOrder = 8,
+                            IsMissing = false,
+                            IsOrdered = false,
+                            Name = "Sørlandschips",
+                            OrderedQuantity = 0,
+                            Price = 0m,
+                            Quantity = 20
+                        },
+                        new
+                        {
+                            Id = 108,
+                            CategoryId = 5,
+                            DisplayOrder = 9,
+                            IsMissing = false,
+                            IsOrdered = false,
+                            Name = "Tørkepapir",
+                            OrderedQuantity = 0,
+                            Price = 0m,
+                            Quantity = 12
+                        },
+                        new
+                        {
+                            Id = 109,
+                            CategoryId = 5,
+                            DisplayOrder = 10,
+                            IsMissing = false,
+                            IsOrdered = false,
+                            Name = "Hårfønere",
+                            OrderedQuantity = 0,
+                            Price = 0m,
+                            Quantity = 7
+                        },
+                        new
+                        {
+                            Id = 110,
+                            CategoryId = 5,
+                            DisplayOrder = 11,
+                            IsMissing = false,
+                            IsOrdered = false,
+                            Name = "Vifter",
+                            OrderedQuantity = 0,
+                            Price = 0m,
+                            Quantity = 5
+                        },
+                        new
+                        {
+                            Id = 111,
+                            CategoryId = 5,
+                            DisplayOrder = 12,
+                            IsMissing = false,
+                            IsOrdered = false,
+                            Name = "Kopper",
+                            OrderedQuantity = 0,
+                            Price = 0m,
+                            Quantity = 80
+                        },
+                        new
+                        {
+                            Id = 112,
+                            CategoryId = 5,
+                            DisplayOrder = 13,
+                            IsMissing = false,
+                            IsOrdered = false,
+                            Name = "Ovner",
+                            OrderedQuantity = 0,
+                            Price = 0m,
+                            Quantity = 2
+                        },
+                        new
+                        {
+                            Id = 113,
+                            CategoryId = 5,
+                            DisplayOrder = 14,
+                            IsMissing = false,
+                            IsOrdered = false,
+                            Name = "Poser",
+                            OrderedQuantity = 0,
+                            Price = 0m,
+                            Quantity = 150
+                        },
+                        new
+                        {
+                            Id = 114,
+                            CategoryId = 5,
+                            DisplayOrder = 15,
+                            IsMissing = false,
+                            IsOrdered = false,
+                            Name = "Dopapir",
+                            OrderedQuantity = 0,
+                            Price = 0m,
+                            Quantity = 30
+                        },
+                        new
+                        {
+                            Id = 115,
+                            CategoryId = 5,
+                            DisplayOrder = 16,
+                            IsMissing = false,
+                            IsOrdered = false,
+                            Name = "Ark",
+                            OrderedQuantity = 0,
+                            Price = 0m,
+                            Quantity = 22
+                        },
+                        new
+                        {
+                            Id = 116,
+                            CategoryId = 5,
+                            DisplayOrder = 17,
+                            IsMissing = false,
+                            IsOrdered = false,
+                            Name = "Skjøteledninger",
+                            OrderedQuantity = 0,
+                            Price = 0m,
+                            Quantity = 6
+                        },
+                        new
+                        {
+                            Id = 117,
+                            CategoryId = 5,
+                            DisplayOrder = 18,
+                            IsMissing = false,
+                            IsOrdered = false,
+                            Name = "Notatark",
+                            OrderedQuantity = 0,
+                            Price = 0m,
+                            Quantity = 35
+                        },
+                        new
+                        {
+                            Id = 118,
+                            CategoryId = 5,
+                            DisplayOrder = 19,
+                            IsMissing = false,
+                            IsOrdered = false,
+                            Name = "Kulepenner",
+                            OrderedQuantity = 0,
+                            Price = 0m,
+                            Quantity = 70
+                        },
+                        new
+                        {
+                            Id = 120,
+                            CategoryId = 6,
+                            DisplayOrder = 1,
+                            IsMissing = false,
+                            IsOrdered = false,
+                            Name = "Håndkler (store)",
+                            OrderedQuantity = 0,
+                            Price = 0m,
+                            Quantity = 45
+                        },
+                        new
+                        {
+                            Id = 121,
+                            CategoryId = 6,
+                            DisplayOrder = 2,
+                            IsMissing = false,
+                            IsOrdered = false,
+                            Name = "Håndkler (små)",
+                            OrderedQuantity = 0,
+                            Price = 0m,
+                            Quantity = 70
+                        },
+                        new
+                        {
+                            Id = 122,
+                            CategoryId = 6,
+                            DisplayOrder = 3,
+                            IsMissing = false,
+                            IsOrdered = false,
+                            Name = "Ørepropper",
+                            OrderedQuantity = 0,
+                            Price = 0m,
+                            Quantity = 120
+                        },
+                        new
+                        {
+                            Id = 123,
+                            CategoryId = 6,
+                            DisplayOrder = 4,
+                            IsMissing = false,
+                            IsOrdered = false,
+                            Name = "Såpe",
+                            OrderedQuantity = 0,
+                            Price = 0m,
+                            Quantity = 90
+                        },
+                        new
+                        {
+                            Id = 124,
+                            CategoryId = 6,
+                            DisplayOrder = 5,
+                            IsMissing = false,
+                            IsOrdered = false,
+                            Name = "Puter",
+                            OrderedQuantity = 0,
+                            Price = 0m,
+                            Quantity = 16
+                        },
+                        new
+                        {
+                            Id = 125,
+                            CategoryId = 6,
+                            DisplayOrder = 6,
+                            IsMissing = false,
+                            IsOrdered = false,
+                            Name = "Dopapir",
+                            OrderedQuantity = 0,
+                            Price = 0m,
+                            Quantity = 64
+                        },
+                        new
+                        {
+                            Id = 126,
+                            CategoryId = 6,
+                            DisplayOrder = 7,
+                            IsMissing = false,
+                            IsOrdered = false,
+                            Name = "Klesruller",
+                            OrderedQuantity = 0,
+                            Price = 0m,
+                            Quantity = 18
+                        },
+                        new
+                        {
+                            Id = 127,
+                            CategoryId = 6,
+                            DisplayOrder = 8,
+                            IsMissing = false,
+                            IsOrdered = false,
+                            Name = "Tørkepapir",
+                            OrderedQuantity = 0,
+                            Price = 0m,
+                            Quantity = 25
+                        },
+                        new
+                        {
+                            Id = 128,
+                            CategoryId = 6,
+                            DisplayOrder = 9,
+                            IsMissing = false,
+                            IsOrdered = false,
+                            Name = "Flipflopper / sandaler",
+                            OrderedQuantity = 0,
+                            Price = 0m,
+                            Quantity = 22
+                        },
+                        new
+                        {
+                            Id = 129,
+                            CategoryId = 6,
+                            DisplayOrder = 10,
+                            IsMissing = false,
+                            IsOrdered = false,
+                            Name = "Tannkremer",
+                            OrderedQuantity = 0,
+                            Price = 0m,
+                            Quantity = 50
+                        },
+                        new
+                        {
+                            Id = 130,
+                            CategoryId = 6,
+                            DisplayOrder = 11,
+                            IsMissing = false,
+                            IsOrdered = false,
+                            Name = "Antibac",
+                            OrderedQuantity = 0,
+                            Price = 0m,
+                            Quantity = 14
+                        },
+                        new
+                        {
+                            Id = 131,
+                            CategoryId = 6,
+                            DisplayOrder = 12,
+                            IsMissing = false,
+                            IsOrdered = false,
+                            Name = "Blekk til printer",
+                            OrderedQuantity = 0,
+                            Price = 0m,
+                            Quantity = 9
+                        },
+                        new
+                        {
+                            Id = 132,
+                            CategoryId = 6,
+                            DisplayOrder = 13,
+                            IsMissing = false,
+                            IsOrdered = false,
+                            Name = "Ansiktsmasker",
+                            OrderedQuantity = 0,
+                            Price = 0m,
+                            Quantity = 40
+                        },
+                        new
+                        {
+                            Id = 133,
+                            CategoryId = 6,
+                            DisplayOrder = 14,
+                            IsMissing = false,
+                            IsOrdered = false,
+                            Name = "Ekstra ovn",
+                            OrderedQuantity = 0,
+                            Price = 0m,
+                            Quantity = 2
+                        },
+                        new
+                        {
+                            Id = 134,
+                            CategoryId = 6,
+                            DisplayOrder = 15,
+                            IsMissing = false,
+                            IsOrdered = false,
+                            Name = "Fluesmekker",
+                            OrderedQuantity = 0,
+                            Price = 0m,
+                            Quantity = 11
+                        },
+                        new
+                        {
+                            Id = 140,
+                            CategoryId = 7,
+                            DisplayOrder = 1,
+                            IsMissing = false,
+                            IsOrdered = false,
+                            Name = "Batteri AA",
+                            OrderedQuantity = 0,
+                            Price = 0m,
+                            Quantity = 42
+                        },
+                        new
+                        {
+                            Id = 141,
+                            CategoryId = 7,
+                            DisplayOrder = 2,
+                            IsMissing = false,
+                            IsOrdered = false,
+                            Name = "Batteri AAA",
+                            OrderedQuantity = 0,
+                            Price = 0m,
+                            Quantity = 38
+                        },
+                        new
+                        {
+                            Id = 142,
+                            CategoryId = 7,
+                            DisplayOrder = 3,
+                            IsMissing = false,
+                            IsOrdered = false,
+                            Name = "Fjernkontroller",
+                            OrderedQuantity = 0,
+                            Price = 0m,
+                            Quantity = 6
+                        },
+                        new
+                        {
+                            Id = 143,
+                            CategoryId = 7,
+                            DisplayOrder = 4,
+                            IsMissing = false,
+                            IsOrdered = false,
+                            Name = "Ørepropper",
+                            OrderedQuantity = 0,
+                            Price = 0m,
+                            Quantity = 20
+                        },
+                        new
+                        {
+                            Id = 144,
+                            CategoryId = 7,
+                            DisplayOrder = 5,
+                            IsMissing = false,
+                            IsOrdered = false,
+                            Name = "Hammer",
+                            OrderedQuantity = 0,
+                            Price = 0m,
+                            Quantity = 0
+                        },
+                        new
+                        {
+                            Id = 145,
+                            CategoryId = 7,
+                            DisplayOrder = 6,
+                            IsMissing = false,
+                            IsOrdered = false,
+                            Name = "Skrutrekker",
+                            OrderedQuantity = 0,
+                            Price = 0m,
+                            Quantity = 0
+                        },
+                        new
+                        {
+                            Id = 146,
+                            CategoryId = 7,
+                            DisplayOrder = 7,
+                            IsMissing = false,
+                            IsOrdered = false,
+                            Name = "Vanlig verktøy",
+                            OrderedQuantity = 0,
+                            Price = 0m,
+                            Quantity = 4
+                        },
+                        new
+                        {
+                            Id = 147,
+                            CategoryId = 7,
+                            DisplayOrder = 8,
+                            IsMissing = false,
+                            IsOrdered = false,
+                            Name = "Spikere",
+                            OrderedQuantity = 0,
+                            Price = 0m,
+                            Quantity = 300
+                        },
+                        new
+                        {
+                            Id = 148,
+                            CategoryId = 7,
+                            DisplayOrder = 9,
+                            IsMissing = false,
+                            IsOrdered = false,
+                            Name = "Lyspærer",
+                            OrderedQuantity = 0,
+                            Price = 0m,
+                            Quantity = 28
+                        },
+                        new
+                        {
+                            Id = 149,
+                            CategoryId = 7,
+                            DisplayOrder = 10,
+                            IsMissing = false,
+                            IsOrdered = false,
+                            Name = "Nøkkelutstyr",
+                            OrderedQuantity = 0,
+                            Price = 0m,
+                            Quantity = 14
+                        },
+                        new
+                        {
+                            Id = 150,
+                            CategoryId = 7,
+                            DisplayOrder = 11,
+                            IsMissing = false,
+                            IsOrdered = false,
+                            Name = "Bånd",
+                            OrderedQuantity = 0,
+                            Price = 0m,
+                            Quantity = 16
                         });
                 });
 
